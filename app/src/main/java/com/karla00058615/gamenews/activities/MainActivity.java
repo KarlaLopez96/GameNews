@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onResponse(Call<List<New>> call, Response<List<New>> response) {
                 TextView text = findViewById(R.id.textoPrueba);
-                text.setText(response.body().get(5).getDescription());
+                text.setText(response.body().get(5).getBody());
                 for (int i = 0 ; i<response.body().size();i++){
                     news.add(response.body().get(i));
                 }
@@ -140,11 +140,8 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_slideshow) {
+        if (id == R.id.nav_share) {
             // Handle the camera action{ {
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
 
