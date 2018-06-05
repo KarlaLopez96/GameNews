@@ -1,13 +1,16 @@
-package com.karla00058615.gamenews;
+package com.karla00058615.gamenews.interfaces;
+
+import com.karla00058615.gamenews.classes.New;
+import com.karla00058615.gamenews.classes.Token;
 
 import java.util.List;
 
-import okhttp3.ResponseBody;
 import retrofit2.Callback;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 
 /**
@@ -16,9 +19,9 @@ import retrofit2.http.POST;
 
 public interface NoticiasAPI {
 
-    @GET("/news")
-    void getNews(Callback<List<New>> callback);
 
+    @GET("/news")
+    Call<List<New>> getNews(@Header("Authorization") String token);
 
     @FormUrlEncoded
     @POST("/login")

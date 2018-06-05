@@ -1,4 +1,4 @@
-package com.karla00058615.gamenews;
+package com.karla00058615.gamenews.classes;
 
 /**
  * Created by Karla on 4/6/2018.

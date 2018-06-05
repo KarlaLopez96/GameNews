@@ -1,10 +1,11 @@
-package com.karla00058615.gamenews;
+package com.karla00058615.gamenews.classes;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.karla00058615.gamenews.classes.Token;
 
 import java.lang.reflect.Type;
 

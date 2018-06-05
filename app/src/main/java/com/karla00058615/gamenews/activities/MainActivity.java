@@ -1,4 +1,4 @@
-package com.karla00058615.gamenews;
+package com.karla00058615.gamenews.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -10,14 +10,25 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.karla00058615.gamenews.classes.New;
+import com.karla00058615.gamenews.interfaces.NoticiasAPI;
+import com.karla00058615.gamenews.R;
+import com.karla00058615.gamenews.classes.Token;
+import com.karla00058615.gamenews.classes.TokenDeserializar;
+import com.squareup.okhttp.Interceptor;
+import com.squareup.okhttp.Request;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
-import retrofit.RxJavaCallAdapterFactory;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -27,13 +38,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    String token="null";
+    NoticiasAPI servicio;
+    ArrayList<New> news;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -52,13 +66,14 @@ public class MainActivity extends AppCompatActivity
                 .baseUrl("https://gamenewsuca.herokuapp.com/")
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
-        NoticiasAPI servicio = retrofit.create(NoticiasAPI.class);
-        //servicio.getNews("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1YjBmNDE1NjdkMjZmZDAwMjBmNjMyN2IiLCJpYXQiOjE1Mjc4OTk3MDIsImV4cCI6MTUyOTEwOTMwMn0.R7ieieRpNkRUT-YhwQccDecuohilo12hN0i2AaafS2Q").onResponse();
-        Call<Token> call=servicio.getToken("00357215","00357215");
+
+        servicio = retrofit.create(NoticiasAPI.class);
+        Call<Token> call = servicio.getToken("00058615","00058615");
         call.enqueue(new Callback<Token>() {
             @Override
             public void onResponse(Call<Token> call, Response<Token> response) {
                 Log.d("Token",response.body().getToken());
+                token = response.body().getToken();
             }
 
             @Override
@@ -66,17 +81,25 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
-        /*servicio.getNews(new Callback<List<New>>() {
+    }
+
+    public void getNews (View view){
+        Call<List<New>> call = servicio.getNews("Bearer "+token);
+        call.enqueue(new Callback<List<New>>() {
             @Override
             public void onResponse(Call<List<New>> call, Response<List<New>> response) {
-                String p;
+                TextView text = findViewById(R.id.textoPrueba);
+                text.setText(response.body().get(5).getDescription());
+                for (int i = 0 ; i<response.body().size();i++){
+                    news.add(response.body().get(i));
+                }
             }
 
             @Override
             public void onFailure(Call<List<New>> call, Throwable t) {
-                System.out.print(t.getMessage());
+                String HOLI;
             }
-        });*/
+        });
     }
 
     @Override
@@ -117,12 +140,8 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
+        if (id == R.id.nav_slideshow) {
+            // Handle the camera action{ {
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
