@@ -16,6 +16,8 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.karla00058615.gamenews.classes.New;
+import com.karla00058615.gamenews.fragments.ManagerFragment;
+import com.karla00058615.gamenews.interfaces.ComunicationIF;
 import com.karla00058615.gamenews.interfaces.NoticiasAPI;
 import com.karla00058615.gamenews.R;
 import com.karla00058615.gamenews.classes.Token;
@@ -38,6 +40,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    int cont = 0;
     String token="null";
     NoticiasAPI servicio;
     ArrayList<New> news;
@@ -97,7 +100,7 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onFailure(Call<List<New>> call, Throwable t) {
-                String HOLI;
+
             }
         });
     }
@@ -140,9 +143,9 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_share) {
-            // Handle the camera action{ {
+        if (id == R.id.nav_news) {
 
+            sendingNews(0);
         } else if (id == R.id.nav_send) {
 
         }
@@ -150,5 +153,33 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void sendingNews(int opc){
+        switch (opc){
+            case 0:
+                //Maneja los fragmentos.
+                android.app.FragmentManager fragmentManager = getFragmentManager();
+
+                //Crea una nueva trasacción.
+                android.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+                //Crea un fragmento y lo añade.
+                ManagerFragment fragment = new ManagerFragment();
+
+                //se crea el bundle y se mandan todas las contactos
+                Bundle bundle = new Bundle();
+
+                bundle.putParcelableArrayList("News",news);
+
+                //se manda el bundle al fragment
+                fragment.setArguments(bundle);
+
+                transaction.replace(R.id.Fragment, fragment);
+
+                //Realizando cambios.
+                transaction.commit();
+                break;
+        }
     }
 }
