@@ -88,8 +88,6 @@ public class MainActivity extends AppCompatActivity
         call.enqueue(new Callback<List<New>>() {
             @Override
             public void onResponse(Call<List<New>> call, Response<List<New>> response) {
-                TextView text = findViewById(R.id.textoPrueba);
-                text.setText(response.body().get(5).getDescription());
                 for (int i = 0 ; i<response.body().size();i++){
                     news.add(response.body().get(i));
                 }
