@@ -3,6 +3,8 @@ package com.karla00058615.gamenews.activities;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -11,27 +13,19 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.karla00058615.gamenews.classes.New;
 import com.karla00058615.gamenews.fragments.ManagerFragment;
-import com.karla00058615.gamenews.interfaces.ComunicationIF;
+import com.karla00058615.gamenews.fragments.NewsList;
 import com.karla00058615.gamenews.interfaces.NoticiasAPI;
 import com.karla00058615.gamenews.R;
 import com.karla00058615.gamenews.classes.Token;
 import com.karla00058615.gamenews.classes.TokenDeserializar;
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.Request;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import okhttp3.OkHttpClient;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -157,10 +151,10 @@ public class MainActivity extends AppCompatActivity
     public void sendingNews(int opc){
         ArrayList<New> gamesN = new ArrayList<>();
         //Maneja los fragmentos.
-        android.app.FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
 
         //Crea una nueva trasacción.
-        android.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
 
         //Crea un fragmento y lo añade.
         ManagerFragment fragment = new ManagerFragment();
@@ -169,12 +163,14 @@ public class MainActivity extends AppCompatActivity
         Bundle bundle = new Bundle();
         switch (opc){
             case 0:
+                NewsList fragment2 = new NewsList();
+
                 bundle.putParcelableArrayList("News",news);
 
                 //se manda el bundle al fragment
-                fragment.setArguments(bundle);
+                fragment2.setArguments(bundle);
 
-                transaction.replace(R.id.Fragment, fragment);
+                transaction.replace(R.id.Fragment, fragment2);
 
                 //Realizando cambios.
                 transaction.commit();

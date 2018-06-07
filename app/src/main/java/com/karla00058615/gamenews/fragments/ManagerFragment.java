@@ -3,23 +3,21 @@ package com.karla00058615.gamenews.fragments;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.app.Fragment;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.karla00058615.gamenews.Adapters.Adapter;
+import com.karla00058615.gamenews.Adapters.ViewPagerAdapter;
 import com.karla00058615.gamenews.R;
-import com.karla00058615.gamenews.classes.New;
 
 import java.util.ArrayList;
 
 public class ManagerFragment extends Fragment {
-
-    ArrayList<New> news;
-    RecyclerView recyclerView;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
 
     private OnFragmentInteractionListener mListener;
 
@@ -34,17 +32,11 @@ public class ManagerFragment extends Fragment {
 
         // Inflando el layout para el fragment_manager.
         View v = inflater.inflate(R.layout.fragment_manager, container, false);
-        Bundle bundle = getArguments();
-        news = bundle.getParcelableArrayList("News");
 
-        RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
-
-        Adapter adapter = new Adapter(getContext(),news,getActivity());
-        recyclerView.setAdapter(adapter);
-
-        //Creando el manager que manejará el formato de las noticias.
-        LinearLayoutManager manager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(manager);
+        tabLayout = v.findViewById(R.id.tablayout_id);
+        viewPager = v.findViewById(R.id.viewpager_id);
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
+        //getChildFragmentManager()
 
         return v;
     }
