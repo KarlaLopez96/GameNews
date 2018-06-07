@@ -15,6 +15,15 @@ public class New implements Parcelable{
     private String convertImg;
     private String created_date;
 
+    public New(int id, String title, String body, String game, String convertImg, String created_date) {
+        this.id = id;
+        this.title = title;
+        this.body = body;
+        this.game = game;
+        this.convertImg = convertImg;
+        this.created_date = created_date;
+    }
+
     protected New(Parcel in) {
         id = in.readInt();
         title = in.readString();

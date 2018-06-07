@@ -1,5 +1,6 @@
 package com.karla00058615.gamenews.activities;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -38,12 +39,12 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,ManagerFragment.OnFragmentInteractionListener{
 
     int cont = 0;
     String token="null";
     NoticiasAPI servicio;
-    ArrayList<New> news;
+    ArrayList<New> news = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity
             public void onResponse(Call<Token> call, Response<Token> response) {
                 Log.d("Token",response.body().getToken());
                 token = response.body().getToken();
+                getList();
             }
 
             @Override
@@ -86,18 +88,15 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    public void getNews (View view){
+    public void getList(){
         Call<List<New>> call = servicio.getNews("Bearer "+token);
         call.enqueue(new Callback<List<New>>() {
             @Override
             public void onResponse(Call<List<New>> call, Response<List<New>> response) {
-                TextView text = findViewById(R.id.textoPrueba);
-                text.setText(response.body().get(5).getBody());
                 for (int i = 0 ; i<response.body().size();i++){
                     news.add(response.body().get(i));
                 }
             }
-
             @Override
             public void onFailure(Call<List<New>> call, Throwable t) {
 
@@ -130,7 +129,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.search) {
             return true;
         }
 
@@ -142,13 +141,13 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
         if (id == R.id.nav_news) {
-
             sendingNews(0);
         } else if (id == R.id.nav_send) {
 
-        }
+        }/*else if (id == R.id.nav_send) {
+            sending(1)
+        }*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -156,20 +155,20 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void sendingNews(int opc){
+        ArrayList<New> gamesN = new ArrayList<>();
+        //Maneja los fragmentos.
+        android.app.FragmentManager fragmentManager = getFragmentManager();
+
+        //Crea una nueva trasacción.
+        android.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+        //Crea un fragmento y lo añade.
+        ManagerFragment fragment = new ManagerFragment();
+
+        //se crea el bundle y se mandan todas las contactos
+        Bundle bundle = new Bundle();
         switch (opc){
             case 0:
-                //Maneja los fragmentos.
-                android.app.FragmentManager fragmentManager = getFragmentManager();
-
-                //Crea una nueva trasacción.
-                android.app.FragmentTransaction transaction = fragmentManager.beginTransaction();
-
-                //Crea un fragmento y lo añade.
-                ManagerFragment fragment = new ManagerFragment();
-
-                //se crea el bundle y se mandan todas las contactos
-                Bundle bundle = new Bundle();
-
                 bundle.putParcelableArrayList("News",news);
 
                 //se manda el bundle al fragment
@@ -180,6 +179,59 @@ public class MainActivity extends AppCompatActivity
                 //Realizando cambios.
                 transaction.commit();
                 break;
+            case 1:
+                for (int i = 0;i<news.size();i++){
+                    if(news.get(i).getGame().equals("lol"))
+                        gamesN.add(news.get(i));
+                }
+
+                bundle.putParcelableArrayList("News",gamesN);
+
+                //se manda el bundle al fragment
+                fragment.setArguments(bundle);
+
+                transaction.replace(R.id.Fragment, fragment);
+
+                //Realizando cambios.
+                transaction.commit();
+                break;
+            case 2:
+                for (int i = 0;i<news.size();i++){
+                    if(news.get(i).getGame().equals("csgo"))
+                        gamesN.add(news.get(i));
+                }
+
+                bundle.putParcelableArrayList("News",gamesN);
+
+                //se manda el bundle al fragment
+                fragment.setArguments(bundle);
+
+                transaction.replace(R.id.Fragment, fragment);
+
+                //Realizando cambios.
+                transaction.commit();
+                break;
+            case 3:
+                for (int i = 0;i<news.size();i++){
+                    if(news.get(i).getGame().equals("dota"))
+                        gamesN.add(news.get(i));
+                }
+
+                bundle.putParcelableArrayList("News",gamesN);
+
+                //se manda el bundle al fragment
+                fragment.setArguments(bundle);
+
+                transaction.replace(R.id.Fragment, fragment);
+
+                //Realizando cambios.
+                transaction.commit();
+                break;
         }
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }
