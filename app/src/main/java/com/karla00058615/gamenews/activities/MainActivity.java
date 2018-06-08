@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.karla00058615.gamenews.classes.New;
+import com.karla00058615.gamenews.classes.Player;
 import com.karla00058615.gamenews.fragments.ManagerFragment;
 import com.karla00058615.gamenews.fragments.NewsList;
 import com.karla00058615.gamenews.interfaces.NoticiasAPI;
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity
     String token="null";
     NoticiasAPI servicio;
     ArrayList<New> news = new ArrayList<>();
+    ArrayList<Player> players = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,10 +92,29 @@ public class MainActivity extends AppCompatActivity
                 for (int i = 0 ; i<response.body().size();i++){
                     news.add(response.body().get(i));
                 }
+                getPlayers();
             }
             @Override
             public void onFailure(Call<List<New>> call, Throwable t) {
 
+            }
+        });
+    }
+
+    public void getPlayers(){
+        Log.d("Token",token);
+        Call<List<Player>> call = servicio.getPlayers ("Bearer "+token);
+        call.enqueue(new Callback<List<Player>>() {
+            @Override
+            public void onResponse(Call<List<Player>> call, Response<List<Player>> response) {
+                String p;
+                for (int i = 0 ; i<response.body().size();i++){
+                    players.add(response.body().get(i));
+                }
+            }
+            @Override
+            public void onFailure(Call<List<Player>> call, Throwable t) {
+                String p ;
             }
         });
     }
@@ -136,20 +157,20 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         if (id == R.id.nav_news) {
-            sendingNews(0);
+            sendingAll(0);
         } else if (id == R.id.nav_Games) {
-            sendingNews(1);
-        }/*else if (id == R.id.nav_send) {
-            sending(1)
-        }*/
+            sendingAll(1);
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    public void sendingNews(int opc){
+    public void sendingAll(int opc){
         ArrayList<New> gamesN = new ArrayList<>();
+        ArrayList<Player> top = new ArrayList<>();
+
         //Maneja los fragmentos.
         FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -176,7 +197,13 @@ public class MainActivity extends AppCompatActivity
                         gamesN.add(news.get(i));
                 }
 
+                for (int i = 0;i<players.size();i++){
+                    if(players.get(i).getGame().equals("lol"))
+                        top.add(players.get(i));
+                }
+
                 bundle.putParcelableArrayList("News",gamesN);
+                bundle.putParcelableArrayList("Top",top);
 
                 //se manda el bundle al fragment
                 fragment.setArguments(bundle);
@@ -186,13 +213,20 @@ public class MainActivity extends AppCompatActivity
                 //Realizando cambios.
                 transaction.commit();
                 break;
+
             case 2:
                 for (int i = 0;i<news.size();i++){
                     if(news.get(i).getGame().equals("csgo"))
                         gamesN.add(news.get(i));
                 }
 
+                for (int i = 0;i<players.size();i++){
+                    if(players.get(i).getGame().equals("csgo"))
+                        top.add(players.get(i));
+                }
+
                 bundle.putParcelableArrayList("News",gamesN);
+                bundle.putParcelableArrayList("Top",top);
 
                 //se manda el bundle al fragment
                 fragment.setArguments(bundle);
@@ -208,8 +242,13 @@ public class MainActivity extends AppCompatActivity
                         gamesN.add(news.get(i));
                 }
 
-                bundle.putParcelableArrayList("News",gamesN);
+                for (int i = 0;i<players.size();i++){
+                    if(players.get(i).getGame().equals("dota"))
+                        top.add(players.get(i));
+                }
 
+                bundle.putParcelableArrayList("News",gamesN);
+                bundle.putParcelableArrayList("Top",top);
                 //se manda el bundle al fragment
                 fragment.setArguments(bundle);
 

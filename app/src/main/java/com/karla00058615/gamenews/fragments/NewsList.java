@@ -4,15 +4,15 @@ package com.karla00058615.gamenews.fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.karla00058615.gamenews.Adapters.Adapter;
+import com.karla00058615.gamenews.Adapters.NewsAdapter;
 import com.karla00058615.gamenews.R;
 import com.karla00058615.gamenews.classes.New;
+import com.karla00058615.gamenews.classes.Player;
 
 import java.util.ArrayList;
 
@@ -24,6 +24,7 @@ public class NewsList extends Fragment {
 
     ArrayList<New> news;
     RecyclerView recyclerView;
+    ArrayList<Player> top;
 
 
     public NewsList() {
@@ -62,7 +63,7 @@ public class NewsList extends Fragment {
             }
         });
 
-        Adapter adapter = new Adapter(getContext(),news,getActivity());
+        NewsAdapter adapter = new NewsAdapter(getContext(),news,getActivity());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(gridLayoutManager);
 

@@ -19,7 +19,7 @@ import java.util.ArrayList;
  * Created by Karla on 5/6/2018.
  */
 
-public class Adapter  extends RecyclerView.Adapter<Adapter.ViewHolder>{
+public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder>{
 
     Context context;
     ArrayList<New> newArrayList;
@@ -27,7 +27,7 @@ public class Adapter  extends RecyclerView.Adapter<Adapter.ViewHolder>{
     Activity activity;
     int cont = 0;
 
-    public Adapter(Context context, ArrayList<New> newArrayList, Activity activity) {
+    public NewsAdapter(Context context, ArrayList<New> newArrayList, Activity activity) {
         this.context = context;
         this.newArrayList = newArrayList;
         this.activity = activity;

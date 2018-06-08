@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.karla00058615.gamenews.Adapters.ViewPagerAdapter;
 import com.karla00058615.gamenews.R;
 import com.karla00058615.gamenews.classes.New;
+import com.karla00058615.gamenews.classes.Player;
 
 import java.util.ArrayList;
 
@@ -20,6 +21,7 @@ public class ManagerFragment extends Fragment {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private ArrayList<New> news;
+    private ArrayList<Player> top;
     private OnFragmentInteractionListener mListener;
 
     public ManagerFragment() {
@@ -35,16 +37,18 @@ public class ManagerFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_manager, container, false);
         Bundle bundle = getArguments();
         news = bundle.getParcelableArrayList("News");
+        top = bundle.getParcelableArrayList("Top");
+
         tabLayout = v.findViewById(R.id.tablayout_id);
         viewPager = v.findViewById(R.id.viewpager_id);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
         adapter.AddFragments(NewsList.newInstance(news),"News");
+        adapter.AddFragments(TopFragment.newInstance(top),"Top Players");
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
         return v;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
