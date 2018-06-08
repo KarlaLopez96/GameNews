@@ -137,8 +137,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         if (id == R.id.nav_news) {
             sendingNews(0);
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_Games) {
+            sendingNews(1);
         }/*else if (id == R.id.nav_send) {
             sending(1)
         }*/
@@ -163,12 +163,7 @@ public class MainActivity extends AppCompatActivity
         Bundle bundle = new Bundle();
         switch (opc){
             case 0:
-                NewsList fragment2 = new NewsList();
-
-                bundle.putParcelableArrayList("News",news);
-
-                //se manda el bundle al fragment
-                fragment2.setArguments(bundle);
+                NewsList fragment2 = NewsList.newInstance(news);
 
                 transaction.replace(R.id.Fragment, fragment2);
 

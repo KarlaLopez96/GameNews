@@ -12,13 +12,14 @@ import android.view.ViewGroup;
 
 import com.karla00058615.gamenews.Adapters.ViewPagerAdapter;
 import com.karla00058615.gamenews.R;
+import com.karla00058615.gamenews.classes.New;
 
 import java.util.ArrayList;
 
 public class ManagerFragment extends Fragment {
     private TabLayout tabLayout;
     private ViewPager viewPager;
-
+    private ArrayList<New> news;
     private OnFragmentInteractionListener mListener;
 
     public ManagerFragment() {
@@ -32,12 +33,14 @@ public class ManagerFragment extends Fragment {
 
         // Inflando el layout para el fragment_manager.
         View v = inflater.inflate(R.layout.fragment_manager, container, false);
-
+        Bundle bundle = getArguments();
+        news = bundle.getParcelableArrayList("News");
         tabLayout = v.findViewById(R.id.tablayout_id);
         viewPager = v.findViewById(R.id.viewpager_id);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
-        //getChildFragmentManager()
-
+        adapter.AddFragments(NewsList.newInstance(news),"News");
+        viewPager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(viewPager);
         return v;
     }
 

@@ -5,17 +5,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.karla00058615.gamenews.fragments.ManagerFragment">
 
-    <android.support.design.widget.TabLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabGravity="fill"
-        app:tabMode="fixed"
-        android:id="@+id/tablayout_id"/>
-    <android.support.v4.view.ViewPager
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/viewpager_id">
+        android:orientation="vertical">
 
-    </android.support.v4.view.ViewPager>
+        <android.support.design.widget.TabLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            app:tabGravity="fill"
+            app:tabMode="fixed"
+            android:id="@+id/tablayout_id" />
+
+        <android.support.v4.view.ViewPager
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="7"
+            android:layout_gravity="bottom"
+            android:id="@+id/viewpager_id">
+
+        </android.support.v4.view.ViewPager>
+
+    </LinearLayout>
 
 </FrameLayout>

@@ -3,6 +3,7 @@ package com.karla00058615.gamenews.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -26,9 +27,16 @@ public class NewsList extends Fragment {
 
 
     public NewsList() {
-        // Required empty public constructor
+
     }
 
+    public static NewsList newInstance(ArrayList<New> news) {
+        NewsList fragmentFirst = new NewsList();
+        Bundle args = new Bundle();
+        args.putParcelableArrayList("News", news);
+        fragmentFirst.setArguments(args);
+        return fragmentFirst;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,14 +47,24 @@ public class NewsList extends Fragment {
         Bundle bundle = getArguments();
         news = bundle.getParcelableArrayList("News");
 
-        RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
+        RecyclerView recyclerView = v.findViewById(R.id.recyclerView);
+
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(),2);
+
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                if(position % 3 == 0){
+                    return 2;
+                }else {
+                    return 1;
+                }
+            }
+        });
 
         Adapter adapter = new Adapter(getContext(),news,getActivity());
         recyclerView.setAdapter(adapter);
-
-        //Creando el manager que manejará el formato de las noticias.
-        LinearLayoutManager manager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(manager);
+        recyclerView.setLayoutManager(gridLayoutManager);
 
         return v;
     }
