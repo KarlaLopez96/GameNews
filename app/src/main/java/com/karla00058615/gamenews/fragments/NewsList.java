@@ -23,6 +23,7 @@ import java.util.ArrayList;
 public class NewsList extends Fragment {
 
     ArrayList<New> news;
+    ArrayList<New> favorits;
     RecyclerView recyclerView;
     ArrayList<Player> top;
 
@@ -31,10 +32,11 @@ public class NewsList extends Fragment {
 
     }
 
-    public static NewsList newInstance(ArrayList<New> news) {
+    public static NewsList newInstance(ArrayList<New> news,ArrayList<New> favoritos) {
         NewsList fragmentFirst = new NewsList();
         Bundle args = new Bundle();
         args.putParcelableArrayList("News", news);
+        args.putParcelableArrayList("Favorits",favoritos);
         fragmentFirst.setArguments(args);
         return fragmentFirst;
     }
@@ -47,6 +49,7 @@ public class NewsList extends Fragment {
 
         Bundle bundle = getArguments();
         news = bundle.getParcelableArrayList("News");
+        favorits = bundle.getParcelableArrayList("Favorits");
 
         RecyclerView recyclerView = v.findViewById(R.id.recyclerView);
 
@@ -63,7 +66,7 @@ public class NewsList extends Fragment {
             }
         });
 
-        NewsAdapter adapter = new NewsAdapter(getContext(),news,getActivity());
+        NewsAdapter adapter = new NewsAdapter(getContext(),news,favorits,getActivity());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(gridLayoutManager);
 

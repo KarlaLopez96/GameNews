@@ -31,4 +31,7 @@ public interface NoticiasAPI {
 
     @GET("/players")
     Call<List<Player>> getPlayers(@Header("Authorization") String token);
+
+    @GET("/news/type/list")
+    Call<List<String>> getCategory(@Header("Authorization") String token);
 }

@@ -21,6 +21,7 @@ public class ManagerFragment extends Fragment {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private ArrayList<New> news;
+    private ArrayList<New> favorits;
     private ArrayList<Player> top;
     private OnFragmentInteractionListener mListener;
 
@@ -38,11 +39,12 @@ public class ManagerFragment extends Fragment {
         Bundle bundle = getArguments();
         news = bundle.getParcelableArrayList("News");
         top = bundle.getParcelableArrayList("Top");
+        favorits = bundle.getParcelableArrayList("Favorits");
 
         tabLayout = v.findViewById(R.id.tablayout_id);
         viewPager = v.findViewById(R.id.viewpager_id);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
-        adapter.AddFragments(NewsList.newInstance(news),"News");
+        adapter.AddFragments(NewsList.newInstance(news,favorits),"News");
         adapter.AddFragments(TopFragment.newInstance(top),"Top Players");
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);

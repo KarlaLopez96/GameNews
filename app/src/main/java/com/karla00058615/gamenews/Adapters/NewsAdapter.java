@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.karla00058615.gamenews.R;
 import com.karla00058615.gamenews.classes.New;
+import com.karla00058615.gamenews.interfaces.ComunicationIF;
 
 import java.util.ArrayList;
 
@@ -21,14 +22,18 @@ import java.util.ArrayList;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder>{
 
+    boolean flag = false;
     Context context;
     ArrayList<New> newArrayList;
+    ArrayList<New> favorits;
     View view;
     Activity activity;
+    ComunicationIF CF;
     int cont = 0;
 
-    public NewsAdapter(Context context, ArrayList<New> newArrayList, Activity activity) {
+    public NewsAdapter(Context context, ArrayList<New> newArrayList,ArrayList<New> favorits, Activity activity) {
         this.context = context;
+        this.favorits = favorits;
         this.newArrayList = newArrayList;
         this.activity = activity;
     }
@@ -39,7 +44,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder>{
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
         View v = inflater.inflate(R.layout.news_card_view, parent, false);
-
+        CF = (ComunicationIF) activity;
         return new ViewHolder(v,context, newArrayList);
     }
 
@@ -50,7 +55,17 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder>{
         holder.fav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                for (int i = 0; i<favorits.size();i++){
+                    if (favorits.get(i).getId() == newArrayList.get(position).getId()){
+                        flag = true;
+                    }
+                }
+                if (flag){
+                    CF.remove(newArrayList.get(position));
+                }else {
+                    CF.addfav(newArrayList.get(position));
+                }
+                flag = false;
             }});
     }
 

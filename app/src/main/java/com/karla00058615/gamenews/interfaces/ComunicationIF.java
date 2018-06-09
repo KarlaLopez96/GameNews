@@ -10,5 +10,7 @@ import java.util.ArrayList;
 
 public interface ComunicationIF {
 
-    public void SendingL();
+    public void addfav(New noticia);
+
+    public void remove(New noticia);
 }

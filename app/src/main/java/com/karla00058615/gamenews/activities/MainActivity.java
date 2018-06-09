@@ -12,7 +12,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SubMenu;
+import android.view.View;
+import android.widget.BaseAdapter;
+import android.widget.HeaderViewListAdapter;
+import android.widget.ListView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -20,6 +26,7 @@ import com.karla00058615.gamenews.classes.New;
 import com.karla00058615.gamenews.classes.Player;
 import com.karla00058615.gamenews.fragments.ManagerFragment;
 import com.karla00058615.gamenews.fragments.NewsList;
+import com.karla00058615.gamenews.interfaces.ComunicationIF;
 import com.karla00058615.gamenews.interfaces.NoticiasAPI;
 import com.karla00058615.gamenews.R;
 import com.karla00058615.gamenews.classes.Token;
@@ -34,13 +41,15 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,ManagerFragment.OnFragmentInteractionListener{
+        implements NavigationView.OnNavigationItemSelectedListener,ManagerFragment.OnFragmentInteractionListener,ComunicationIF{
 
     int cont = 0;
     String token="null";
     NoticiasAPI servicio;
     ArrayList<New> news = new ArrayList<>();
+    ArrayList<New> favorits = new ArrayList<>();
     ArrayList<Player> players = new ArrayList<>();
+    ArrayList<String> category = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,15 +116,35 @@ public class MainActivity extends AppCompatActivity
         call.enqueue(new Callback<List<Player>>() {
             @Override
             public void onResponse(Call<List<Player>> call, Response<List<Player>> response) {
-                String p;
                 for (int i = 0 ; i<response.body().size();i++){
                     players.add(response.body().get(i));
                 }
+                getCategory();
             }
             @Override
             public void onFailure(Call<List<Player>> call, Throwable t) {
                 String p ;
             }
+        });
+    }
+
+    public void getCategory (){
+        Log.d("Token",token);
+        Call<List<String>> call = servicio.getCategory ("Bearer "+token);
+        call.enqueue(new Callback<List<String>>() {
+            @Override
+            public void onResponse(Call<List<String>> call, Response<List<String>> response) {
+                String p;
+                for (int i = 0 ; i<response.body().size();i++){
+                    category.add(response.body().get(i));
+                }
+                addMenuItemInNavMenuDrawer();
+            }
+            @Override
+            public void onFailure(Call<List<String>> call, Throwable t) {
+                String p ;
+            }
+            String p;
         });
     }
 
@@ -136,13 +165,22 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+
+    private void addMenuItemInNavMenuDrawer() {
+        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+        Menu menu = navView.getMenu();
+        SubMenu subMenu = menu.addSubMenu("Games");
+        for (int i = 0;i<category.size();i++){
+            subMenu.add(0,i,1,category.get(i));
+        }
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
         if (id == R.id.search) {
             return true;
@@ -157,12 +195,19 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         if (id == R.id.nav_news) {
-            sendingAll(0);
-        } else if (id == R.id.nav_Games) {
-            sendingAll(1);
+            sendingAll(R.id.nav_news);
+        }
+        if (id == R.id.nav_fav){
+            sendingAll(R.id.nav_fav);
+        } else{
+            for (int i = 0 ; i<category.size();i++){
+                if(id == i){
+                    sendingAll(i);
+                }
+            }
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -183,72 +228,37 @@ public class MainActivity extends AppCompatActivity
         //se crea el bundle y se mandan todas las contactos
         Bundle bundle = new Bundle();
         switch (opc){
-            case 0:
-                NewsList fragment2 = NewsList.newInstance(news);
+            case R.id.nav_news:
+                NewsList fragment2 = NewsList.newInstance(news,favorits);
 
                 transaction.replace(R.id.Fragment, fragment2);
 
                 //Realizando cambios.
                 transaction.commit();
                 break;
-            case 1:
-                for (int i = 0;i<news.size();i++){
-                    if(news.get(i).getGame().equals("lol"))
-                        gamesN.add(news.get(i));
-                }
+            case R.id.nav_fav:
+                NewsList fragment3 = NewsList.newInstance(favorits,favorits);
 
-                for (int i = 0;i<players.size();i++){
-                    if(players.get(i).getGame().equals("lol"))
-                        top.add(players.get(i));
-                }
-
-                bundle.putParcelableArrayList("News",gamesN);
-                bundle.putParcelableArrayList("Top",top);
-
-                //se manda el bundle al fragment
-                fragment.setArguments(bundle);
-
-                transaction.replace(R.id.Fragment, fragment);
+                transaction.replace(R.id.Fragment, fragment3);
 
                 //Realizando cambios.
                 transaction.commit();
                 break;
-
-            case 2:
+            default:
                 for (int i = 0;i<news.size();i++){
-                    if(news.get(i).getGame().equals("csgo"))
+                    if(news.get(i).getGame().equals(category.get(opc)))
                         gamesN.add(news.get(i));
                 }
 
                 for (int i = 0;i<players.size();i++){
-                    if(players.get(i).getGame().equals("csgo"))
+                    if(players.get(i).getGame().equals(category.get(opc)))
                         top.add(players.get(i));
                 }
 
                 bundle.putParcelableArrayList("News",gamesN);
                 bundle.putParcelableArrayList("Top",top);
+                bundle.putParcelableArrayList("Favorits",favorits);
 
-                //se manda el bundle al fragment
-                fragment.setArguments(bundle);
-
-                transaction.replace(R.id.Fragment, fragment);
-
-                //Realizando cambios.
-                transaction.commit();
-                break;
-            case 3:
-                for (int i = 0;i<news.size();i++){
-                    if(news.get(i).getGame().equals("dota"))
-                        gamesN.add(news.get(i));
-                }
-
-                for (int i = 0;i<players.size();i++){
-                    if(players.get(i).getGame().equals("dota"))
-                        top.add(players.get(i));
-                }
-
-                bundle.putParcelableArrayList("News",gamesN);
-                bundle.putParcelableArrayList("Top",top);
                 //se manda el bundle al fragment
                 fragment.setArguments(bundle);
 
@@ -263,5 +273,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    @Override
+    public void addfav(New noticia) {
+        favorits.add(noticia);
+    }
+
+    @Override
+    public void remove(New noticia) {
+        favorits.remove(noticia);
     }
 }
