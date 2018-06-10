@@ -13,14 +13,16 @@ public class New implements Parcelable{
     private String body;
     private String game;
     private String convertImg;
+    private String description;
     private String created_date;
 
-    public New(int id, String title, String body, String game, String convertImg, String created_date) {
+    public New(int id, String title, String body, String game, String convertImg,String description, String created_date) {
         this.id = id;
         this.title = title;
         this.body = body;
         this.game = game;
         this.convertImg = convertImg;
+        this.description = description;
         this.created_date = created_date;
     }
 
@@ -30,7 +32,16 @@ public class New implements Parcelable{
         body = in.readString();
         game = in.readString();
         convertImg = in.readString();
+        description = in.readString();
         created_date = in.readString();
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public int getId() {
@@ -93,6 +104,7 @@ public class New implements Parcelable{
         dest.writeString(body);
         dest.writeString(game);
         dest.writeString(convertImg);
+        dest.writeString(description);
         dest.writeString(created_date);
     }
 

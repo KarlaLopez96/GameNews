@@ -50,20 +50,37 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
+        for (int i = 0; i<favorits.size();i++){
+            if (favorits.get(i).getCreated_date().equals(newArrayList.get(position).getCreated_date())){
+                flag = true;
+            }
+        }
+        if (flag){
+            holder.fav.setImageDrawable(context.getResources().getDrawable(R.drawable.favo1));
+            flag=false;
+        }else {
+            holder.fav.setImageDrawable(context.getResources().getDrawable(R.drawable.favo));
+        }
         holder.titleTxtView.setText(newArrayList.get(position).getTitle());
+        holder.descriptionTxtView.setText(newArrayList.get(position).getDescription());
         //listener de cada imageButton con forma de estrella
         holder.fav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 for (int i = 0; i<favorits.size();i++){
-                    if (favorits.get(i).getId() == newArrayList.get(position).getId()){
+                    if (favorits.get(i).getCreated_date().equals(newArrayList.get(position).getCreated_date())){
                         flag = true;
                     }
                 }
                 if (flag){
-                    CF.remove(newArrayList.get(position));
+                    //Removiendolo de la lista de favoritos.
+                    favorits.remove(newArrayList.get(position));
+                    holder.fav.setImageDrawable(context.getResources().getDrawable(R.drawable.favo));
                 }else {
+                    //Agregandolo a la lista de favoritos.
                     CF.addfav(newArrayList.get(position));
+
+                    holder.fav.setImageDrawable(context.getResources().getDrawable(R.drawable.favo1));
                 }
                 flag = false;
             }});

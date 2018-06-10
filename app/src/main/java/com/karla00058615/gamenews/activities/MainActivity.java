@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity
 
     public void sendingAll(int opc){
         ArrayList<New> gamesN = new ArrayList<>();
-        ArrayList<Player> top = new ArrayList<>();
+        ArrayList<Player> top = new ArrayList<>();//blablablbalbalb,title: El perro loco,Body: todo el perro loco (10)
 
         //Maneja los fragmentos.
         FragmentManager fragmentManager = getSupportFragmentManager();
