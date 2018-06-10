@@ -12,13 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.SubMenu;
-import android.view.View;
-import android.widget.BaseAdapter;
-import android.widget.HeaderViewListAdapter;
-import android.widget.ListView;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -65,6 +60,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
         navigationView.setNavigationItemSelectedListener(this);
 
         Gson gson = new GsonBuilder()
