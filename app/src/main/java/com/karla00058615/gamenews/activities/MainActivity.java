@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.karla00058615.gamenews.classes.New;
 import com.karla00058615.gamenews.classes.Player;
+import com.karla00058615.gamenews.classes.User;
 import com.karla00058615.gamenews.fragments.ManagerFragment;
 import com.karla00058615.gamenews.fragments.NewsList;
 import com.karla00058615.gamenews.interfaces.ComunicationIF;
@@ -38,13 +39,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,ManagerFragment.OnFragmentInteractionListener,ComunicationIF{
 
-    int cont = 0;
-    String token="null";
-    NoticiasAPI servicio;
-    ArrayList<New> news = new ArrayList<>();
-    ArrayList<New> favorits = new ArrayList<>();
-    ArrayList<Player> players = new ArrayList<>();
-    ArrayList<String> category = new ArrayList<>();
+    private int cont = 0;
+    private String token="null";
+    private NoticiasAPI servicio;
+    private String userId;
+    private ArrayList<New> news = new ArrayList<>();
+    private ArrayList<New> favorits = new ArrayList<>();
+    private ArrayList<Player> players = new ArrayList<>();
+    private ArrayList<String> category = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,7 +132,6 @@ public class MainActivity extends AppCompatActivity
         call.enqueue(new Callback<List<String>>() {
             @Override
             public void onResponse(Call<List<String>> call, Response<List<String>> response) {
-                String p;
                 for (int i = 0 ; i<response.body().size();i++){
                     category.add(response.body().get(i));
                 }
@@ -138,9 +139,8 @@ public class MainActivity extends AppCompatActivity
             }
             @Override
             public void onFailure(Call<List<String>> call, Throwable t) {
-                String p ;
+
             }
-            String p;
         });
     }
 

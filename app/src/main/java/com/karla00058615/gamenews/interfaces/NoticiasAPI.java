@@ -3,6 +3,7 @@ package com.karla00058615.gamenews.interfaces;
 import com.karla00058615.gamenews.classes.New;
 import com.karla00058615.gamenews.classes.Player;
 import com.karla00058615.gamenews.classes.Token;
+import com.karla00058615.gamenews.classes.User;
 
 import java.util.List;
 
