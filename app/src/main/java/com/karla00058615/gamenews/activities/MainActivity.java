@@ -19,7 +19,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.karla00058615.gamenews.classes.New;
 import com.karla00058615.gamenews.classes.Player;
-import com.karla00058615.gamenews.classes.User;
 import com.karla00058615.gamenews.fragments.ManagerFragment;
 import com.karla00058615.gamenews.fragments.NewsList;
 import com.karla00058615.gamenews.interfaces.ComunicationIF;
