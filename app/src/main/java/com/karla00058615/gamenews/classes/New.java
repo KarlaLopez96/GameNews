@@ -8,7 +8,7 @@ import android.os.Parcelable;
  */
 
 public class New implements Parcelable{
-    private int id;
+    private String _id;
     private String title;
     private String body;
     private String game;
@@ -16,8 +16,8 @@ public class New implements Parcelable{
     private String description;
     private String created_date;
 
-    public New(int id, String title, String body, String game, String convertImg,String description, String created_date) {
-        this.id = id;
+    public New(String _id, String title, String body, String game, String convertImg, String description, String created_date) {
+        this._id = _id;
         this.title = title;
         this.body = body;
         this.game = game;
@@ -27,7 +27,7 @@ public class New implements Parcelable{
     }
 
     protected New(Parcel in) {
-        id = in.readInt();
+        _id = in.readString();
         title = in.readString();
         body = in.readString();
         game = in.readString();
@@ -44,12 +44,12 @@ public class New implements Parcelable{
         this.description = description;
     }
 
-    public int getId() {
-        return id;
+    public String get_id() {
+        return _id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public String getTitle() {
@@ -99,7 +99,7 @@ public class New implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
+        dest.writeString(_id);
         dest.writeString(title);
         dest.writeString(body);
         dest.writeString(game);

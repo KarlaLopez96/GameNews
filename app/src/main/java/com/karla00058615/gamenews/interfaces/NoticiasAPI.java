@@ -1,8 +1,10 @@
 package com.karla00058615.gamenews.interfaces;
 
 import com.karla00058615.gamenews.classes.New;
+import com.karla00058615.gamenews.classes.NewFav;
 import com.karla00058615.gamenews.classes.Player;
 import com.karla00058615.gamenews.classes.Token;
+import com.karla00058615.gamenews.classes.User;
 
 import java.util.List;
 
@@ -34,4 +36,15 @@ public interface NoticiasAPI {
 
     @GET("/news/type/list")
     Call<List<String>> getCategory(@Header("Authorization") String token);
+
+    @GET("/users/detail")
+    Call<User> getUserInfo(@Header("Authorization") String token);
+
+    @FormUrlEncoded
+    @POST("/users/{userId}/fav")
+    Call<NewFav> addFav(@Header("Authorization") String token, @Path("userId") String userId, @Field("new") String new_id);
+
+    @FormUrlEncoded
+    @POST("/users/{userId}/fav")
+    Call<String> removeFav(@Header("Authorization") String token, @Path("userId") String userId, @Field("new") String new_id);
 }
