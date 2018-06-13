@@ -29,7 +29,6 @@ public interface NoticiasAPI {
     @FormUrlEncoded
     @POST("/login")
     Call<Token> getToken(@Field("user") String User, @Field("password") String Pass);
-
     @GET("/players")
     Call<List<Player>> getPlayers(@Header("Authorization") String token);
 
