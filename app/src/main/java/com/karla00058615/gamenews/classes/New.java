@@ -1,27 +1,48 @@
 package com.karla00058615.gamenews.classes;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 /**
  * Created by Karla on 3/6/2018.
  */
 
+@Entity(tableName = "News")
 public class New implements Parcelable{
+
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "_id")
     private String _id;
+
+    @ColumnInfo(name = "title")
     private String title;
+
+    @ColumnInfo(name = "body")
     private String body;
+
+    @ColumnInfo(name = "game")
     private String game;
-    private String convertImg;
+
+    @ColumnInfo(name = "coverImage")
+    private String coverImage;
+
+    @ColumnInfo(name = "description")
     private String description;
+
+    @ColumnInfo(name = "created_date")
     private String created_date;
 
-    public New(String _id, String title, String body, String game, String convertImg, String description, String created_date) {
+    public New(String _id, String title, String body, String game, String coverImage, String description, String created_date) {
         this._id = _id;
         this.title = title;
         this.body = body;
         this.game = game;
-        this.convertImg = convertImg;
+        this.coverImage = coverImage;
         this.description = description;
         this.created_date = created_date;
     }
@@ -31,7 +52,7 @@ public class New implements Parcelable{
         title = in.readString();
         body = in.readString();
         game = in.readString();
-        convertImg = in.readString();
+        coverImage = in.readString();
         description = in.readString();
         created_date = in.readString();
     }
@@ -76,12 +97,12 @@ public class New implements Parcelable{
         this.game = game;
     }
 
-    public String getConvertImg() {
-        return convertImg;
+    public String getCoverImage() {
+        return coverImage;
     }
 
-    public void setConvertImg(String convertImg) {
-        this.convertImg = convertImg;
+    public void setCoverImage(String coverImage) {
+        this.coverImage = coverImage;
     }
 
     public String getCreated_date() {
@@ -103,7 +124,7 @@ public class New implements Parcelable{
         dest.writeString(title);
         dest.writeString(body);
         dest.writeString(game);
-        dest.writeString(convertImg);
+        dest.writeString(coverImage);
         dest.writeString(description);
         dest.writeString(created_date);
     }

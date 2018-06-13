@@ -8,7 +8,6 @@ import com.karla00058615.gamenews.classes.User;
 
 import java.util.List;
 
-import retrofit2.Callback;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -30,7 +29,6 @@ public interface NoticiasAPI {
     @FormUrlEncoded
     @POST("/login")
     Call<Token> getToken(@Field("user") String User, @Field("password") String Pass);
-
     @GET("/players")
     Call<List<Player>> getPlayers(@Header("Authorization") String token);
 
