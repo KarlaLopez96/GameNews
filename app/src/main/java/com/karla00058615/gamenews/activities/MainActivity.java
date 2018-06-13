@@ -14,11 +14,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.karla00058615.gamenews.classes.New;
+import com.karla00058615.gamenews.classes.NewFav;
 import com.karla00058615.gamenews.classes.Player;
+import com.karla00058615.gamenews.classes.User;
 import com.karla00058615.gamenews.fragments.ManagerFragment;
 import com.karla00058615.gamenews.fragments.NewsList;
 import com.karla00058615.gamenews.interfaces.ComunicationIF;
@@ -135,16 +138,63 @@ public class MainActivity extends AppCompatActivity
                     category.add(response.body().get(i));
                 }
                 addMenuItemInNavMenuDrawer();
+                getUser();
             }
             @Override
             public void onFailure(Call<List<String>> call, Throwable t) {
+            }
+        });
+    }
 
+    // estabas haciendo el post del agregar favoritos
+    public void addFav(String id) {
+        Call<NewFav> call = servicio.addFav("Bearer " + token,userId,id);
+        call.enqueue(new Callback<NewFav>() {
+            @Override
+            public void onResponse(Call<NewFav> call, Response<NewFav> response) {
+                if(response.body().getAdd().equals("true")){
+                    String p;
+                }
+            }
+            @Override
+            public void onFailure(Call<NewFav> call, Throwable t) {
+            }
+        });
+    }
+
+    public void removeFav(String id) {
+        Call<String> call = servicio.removeFav("Bearer " + token,userId,id);
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                if(response.body().equals("The New has be Removed")){
+                    System.out.println("removido como se debe");
+                }
+            }
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+            }
+        });
+    }
+
+    public void getUser(){
+        Call<User> call = servicio.getUserInfo ("Bearer "+token);
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                userId = response.body().get_id();
+                for (int i = 0;i<response.body().getFavoriteNews().size();i++){
+                    favorits.add(response.body().getFavoriteNews().get(i));
+                }
+            }
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
             }
         });
     }
 
     @Override
-    public void onBackPressed() {
+    public void onBackPressed(){
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -209,7 +259,7 @@ public class MainActivity extends AppCompatActivity
 
     public void sendingAll(int opc){
         ArrayList<New> gamesN = new ArrayList<>();
-        ArrayList<Player> top = new ArrayList<>();//blablablbalbalb,title: El perro loco,Body: todo el perro loco (10)
+        ArrayList<Player> top = new ArrayList<>();
 
         //Maneja los fragmentos.
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -267,16 +317,17 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFragmentInteraction(Uri uri) {
-
     }
 
     @Override
     public void addfav(New noticia) {
+        addFav(noticia.get_id());
         favorits.add(noticia);
     }
 
     @Override
     public void remove(New noticia) {
+        removeFav(noticia.get_id());
         favorits.remove(noticia);
     }
 }
