@@ -7,13 +7,13 @@ import java.util.ArrayList;
  */
 
 public class User {
-    private ArrayList<New> favoriteNews;
+    private ArrayList<String> favoriteNews;
     private String _id;
     private String user;
     private String password;
     private String created_date;
 
-    public User(ArrayList<New> favoriteNews, String _id, String user, String password, String created_date) {
+    public User(ArrayList<String> favoriteNews, String _id, String user, String password, String created_date) {
         this.favoriteNews = favoriteNews;
         this._id = _id;
         this.user = user;
@@ -21,11 +21,11 @@ public class User {
         this.created_date = created_date;
     }
 
-    public ArrayList<New> getFavoriteNews() {
+    public ArrayList<String> getFavoriteNews() {
         return favoriteNews;
     }
 
-    public void setFavoriteNews(ArrayList<New> favoriteNews) {
+    public void setFavoriteNews(ArrayList<String> favoriteNews) {
         this.favoriteNews = favoriteNews;
     }
 

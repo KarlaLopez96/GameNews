@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -137,8 +136,8 @@ public class MainActivity extends AppCompatActivity
                 for (int i = 0 ; i<response.body().size();i++){
                     category.add(response.body().get(i));
                 }
-                addMenuItemInNavMenuDrawer();
                 getUser();
+                addMenuItemInNavMenuDrawer();
             }
             @Override
             public void onFailure(Call<List<String>> call, Throwable t) {
@@ -152,7 +151,7 @@ public class MainActivity extends AppCompatActivity
         call.enqueue(new Callback<NewFav>() {
             @Override
             public void onResponse(Call<NewFav> call, Response<NewFav> response) {
-                if(response.body().getAdd().equals("true")){
+                if(response.body().getSuccess().equals("true")){
                     String p;
                 }
             }
@@ -167,7 +166,7 @@ public class MainActivity extends AppCompatActivity
         call.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {
-                if(response.body().equals("The New has be Removed")){
+                if(response.body().equals("The New has been Removed")){
                     System.out.println("removido como se debe");
                 }
             }
@@ -184,7 +183,11 @@ public class MainActivity extends AppCompatActivity
             public void onResponse(Call<User> call, Response<User> response) {
                 userId = response.body().get_id();
                 for (int i = 0;i<response.body().getFavoriteNews().size();i++){
-                    favorits.add(response.body().getFavoriteNews().get(i));
+                    for (int j = 0 ; j<news.size();j++){
+                        if (news.get(j).get_id().equals(response.body().getFavoriteNews().get(i))){
+                            favorits.add(news.get(j));
+                        }
+                    }
                 }
             }
             @Override

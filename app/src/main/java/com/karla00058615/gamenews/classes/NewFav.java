@@ -7,20 +7,20 @@ import java.util.ArrayList;
  */
 
 public class NewFav {
-    private String succes;
+    private String success;
     private New add;
 
-    public NewFav(String succes, New add) {
-        this.succes = succes;
+    public NewFav(String success, New add) {
+        this.success = success;
         this.add = add;
     }
 
-    public String getSucces() {
-        return succes;
+    public String getSuccess() {
+        return success;
     }
 
-    public void setSucces(String succes) {
-        this.succes = succes;
+    public void setSuccess(String success) {
+        this.success = success;
     }
 
     public New getAdd() {

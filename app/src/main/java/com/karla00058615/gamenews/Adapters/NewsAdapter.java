@@ -3,6 +3,8 @@ package com.karla00058615.gamenews.Adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +13,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.karla00058615.gamenews.R;
+import com.karla00058615.gamenews.activities.MainActivity;
 import com.karla00058615.gamenews.classes.New;
+import com.karla00058615.gamenews.fragments.InfoFragment;
 import com.karla00058615.gamenews.interfaces.ComunicationIF;
 
 import java.util.ArrayList;
@@ -74,7 +78,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder>{
                 }
                 if (flag){
                     //Removiendolo de la lista de favoritos.
-                    favorits.remove(newArrayList.get(position));
+                    CF.remove(newArrayList.get(position));
                     holder.fav.setImageDrawable(context.getResources().getDrawable(R.drawable.favo));
                 }else {
                     //Agregandolo a la lista de favoritos.
@@ -91,7 +95,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder>{
         return newArrayList.size();
     }
 
-    protected static class ViewHolder extends RecyclerView.ViewHolder{
+    protected static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         ImageView img;
         TextView titleTxtView,descriptionTxtView;
         ArrayList<New> News = new ArrayList<>();
@@ -102,11 +106,28 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder>{
             super(itemView);
             this.News = contactos;
             this.ctx = ctx;
-            //itemView.setOnClickListener(this);
+            itemView.setOnClickListener(this);
             titleTxtView = itemView.findViewById(R.id.newTitle);
             descriptionTxtView = itemView.findViewById(R.id.newDescription);
             fav = itemView.findViewById(R.id.favIcon);
         }
 
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+
+            //Maneja los fragmentos.
+            FragmentManager fragmentManager = ((MainActivity)v.getContext()).getSupportFragmentManager();
+
+            //Crea una nueva trasacción.
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+            InfoFragment fragment = InfoFragment.newInstance(News.get(position));
+
+            transaction.replace(R.id.Fragment, fragment);
+
+            //Realizando cambios.
+            transaction.commit();
+        }
     }
 }
