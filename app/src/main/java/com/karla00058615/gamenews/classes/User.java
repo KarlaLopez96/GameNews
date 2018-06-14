@@ -1,16 +1,35 @@
 package com.karla00058615.gamenews.classes;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 
 /**
  * Created by Karla on 11/6/2018.
  */
 
+@Entity (tableName = "User")
 public class User {
+
+    @ColumnInfo(name = "favorite")
+    @NonNull
     private ArrayList<String> favoriteNews;
+
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "id")
     private String _id;
+
+    @ColumnInfo(name = "user")
     private String user;
+
+    @ColumnInfo(name = "password")
     private String password;
+
+    @ColumnInfo(name = "created_date")
     private String created_date;
 
     public User(ArrayList<String> favoriteNews, String _id, String user, String password, String created_date) {

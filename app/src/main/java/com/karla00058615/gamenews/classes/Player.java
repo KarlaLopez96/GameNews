@@ -1,17 +1,29 @@
 package com.karla00058615.gamenews.classes;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 /**
  * Created by Karla on 8/6/2018.
  */
 
+@Entity (tableName = "Player")
 public class Player implements Parcelable {
 
+    @NonNull
+    @ColumnInfo (name = "name")
     private String name;
+
+    @ColumnInfo(name = "biography")
     private String biography;
+
+    @ColumnInfo (name = "avatar")
     private String avatar;
+
+    @ColumnInfo(name = "game")
     private String game;
 
     protected Player(Parcel in) {

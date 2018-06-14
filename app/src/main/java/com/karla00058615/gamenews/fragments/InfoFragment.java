@@ -1,6 +1,5 @@
 package com.karla00058615.gamenews.fragments;
 
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,16 +10,12 @@ import android.widget.TextView;
 import com.karla00058615.gamenews.R;
 import com.karla00058615.gamenews.classes.New;
 
-import java.util.ArrayList;
-
-
 /**
  * A simple {@link Fragment} subclass.
  */
 public class InfoFragment extends Fragment {
 
     TextView txt1,txt2,txt3,txt4;
-
 
     public static InfoFragment newInstance(New news) {
         InfoFragment fragmentFirst = new InfoFragment();
@@ -34,7 +29,6 @@ public class InfoFragment extends Fragment {
     public InfoFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

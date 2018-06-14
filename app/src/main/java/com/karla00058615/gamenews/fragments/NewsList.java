@@ -1,6 +1,5 @@
 package com.karla00058615.gamenews.fragments;
 
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -15,7 +14,6 @@ import com.karla00058615.gamenews.classes.New;
 import com.karla00058615.gamenews.classes.Player;
 
 import java.util.ArrayList;
-
 
 /**
  * A simple {@link Fragment} subclass.
