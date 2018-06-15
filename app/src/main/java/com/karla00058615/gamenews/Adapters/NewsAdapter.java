@@ -67,6 +67,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder>{
         }
         holder.titleTxtView.setText(newArrayList.get(position).getTitle());
         holder.descriptionTxtView.setText(newArrayList.get(position).getDescription());
+
+        //Aqui va el código de las imagenes.
+
         //listener de cada imageButton con forma de estrella
         holder.fav.setOnClickListener(new View.OnClickListener() {
             @Override

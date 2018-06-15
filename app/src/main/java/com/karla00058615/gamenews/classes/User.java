@@ -14,8 +14,6 @@ import java.util.ArrayList;
 @Entity (tableName = "User")
 public class User {
 
-    @ColumnInfo(name = "favorite")
-    @NonNull
     private ArrayList<String> favoriteNews;
 
     @PrimaryKey
