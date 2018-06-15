@@ -22,8 +22,8 @@
                 android:id="@+id/new_image"
                 android:src="@mipmap/ic_launcher"
                 android:layout_margin="2dp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_width="359dp"
+                android:layout_height="80dp" />
 
         </LinearLayout>
 

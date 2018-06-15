@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.karla00058615.gamenews.fragments.InfoFragment">
+    tools:context="com.karla00058615.gamenews.fragments.InfoPlayer">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,25 +11,17 @@
 
         <ImageView
             android:layout_gravity="center"
-            android:id="@+id/InfoImage"
+            android:id="@+id/InfoPlayerImage"
             android:layout_width="200dp"
             android:layout_height="200dp" />
 
         <TextView
-            android:id="@+id/InfoTitle"
+            android:id="@+id/InfoPlayerName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <TextView
-            android:id="@+id/InfoBody"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/InfoDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/InfoDate"
+            android:id="@+id/InfoPlayerBiografia"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
