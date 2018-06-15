@@ -18,7 +18,7 @@ public class Player implements Parcelable {
     private String name;
 
     @ColumnInfo(name = "biography")
-    private String biography;
+    private String biografia;
 
     @ColumnInfo (name = "avatar")
     private String avatar;
@@ -28,14 +28,14 @@ public class Player implements Parcelable {
 
     protected Player(Parcel in) {
         name = in.readString();
-        biography = in.readString();
+        biografia = in.readString();
         avatar = in.readString();
         game = in.readString();
     }
 
-    public Player(String name, String biography, String avatar, String game) {
+    public Player(String name, String biografia, String avatar, String game) {
         this.name = name;
-        this.biography = biography;
+        this.biografia = biografia;
         this.avatar = avatar;
         this.game = game;
     }
@@ -61,11 +61,11 @@ public class Player implements Parcelable {
     }
 
     public String getBiography() {
-        return biography;
+        return biografia;
     }
 
-    public void setBiography(String biography) {
-        this.biography = biography;
+    public void setBiography(String biografia) {
+        this.biografia = biografia;
     }
 
     public String getAvatar() {
@@ -92,7 +92,7 @@ public class Player implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
-        dest.writeString(biography);
+        dest.writeString(biografia);
         dest.writeString(avatar);
         dest.writeString(game);
     }

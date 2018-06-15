@@ -17,6 +17,7 @@ import com.karla00058615.gamenews.activities.MainActivity;
 import com.karla00058615.gamenews.classes.New;
 import com.karla00058615.gamenews.fragments.InfoFragment;
 import com.karla00058615.gamenews.interfaces.ComunicationIF;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -55,7 +56,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder>{
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         for (int i = 0; i<favorits.size();i++){
-            if (favorits.get(i).getCreated_date().equals(newArrayList.get(position).getCreated_date())){
+            if (favorits.get(i).get_id().equals(newArrayList.get(position).get_id())){
                 flag = true;
             }
         }
@@ -68,14 +69,17 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder>{
         holder.titleTxtView.setText(newArrayList.get(position).getTitle());
         holder.descriptionTxtView.setText(newArrayList.get(position).getDescription());
 
-        //Aqui va el código de las imagenes.
+        //Obteniendo las imágenes.
+        Picasso.with(context).load(newArrayList.get(position).getCoverImage())
+                .placeholder(R.drawable.ic_launcher_background)
+                .error(R.drawable.ic_launcher_background).into(holder.img);
 
         //listener de cada imageButton con forma de estrella
         holder.fav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 for (int i = 0; i<favorits.size();i++){
-                    if (favorits.get(i).getCreated_date().equals(newArrayList.get(position).getCreated_date())){
+                    if (favorits.get(i).get_id().equals(newArrayList.get(position).get_id())){
                         flag = true;
                     }
                 }
@@ -110,6 +114,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder>{
             this.News = contactos;
             this.ctx = ctx;
             itemView.setOnClickListener(this);
+            img = itemView.findViewById(R.id.new_image);
             titleTxtView = itemView.findViewById(R.id.newTitle);
             descriptionTxtView = itemView.findViewById(R.id.newDescription);
             fav = itemView.findViewById(R.id.favIcon);
