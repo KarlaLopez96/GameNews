@@ -1,7 +1,6 @@
 package com.karla00058615.gamenews.activities;
 
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,10 +22,12 @@ import android.view.View;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.karla00058615.gamenews.classes.Category;
+import com.karla00058615.gamenews.classes.FavNewDB;
 import com.karla00058615.gamenews.classes.New;
 import com.karla00058615.gamenews.classes.NewFav;
 import com.karla00058615.gamenews.classes.Player;
 import com.karla00058615.gamenews.classes.User;
+import com.karla00058615.gamenews.classes.UserDB;
 import com.karla00058615.gamenews.data.base.NewsViewModel;
 import com.karla00058615.gamenews.fragments.ManagerFragment;
 import com.karla00058615.gamenews.fragments.NewsList;
@@ -56,9 +57,10 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<Player> players = new ArrayList<>();
     private ArrayList<String> category = new ArrayList<>();
     private List<New> newsList;
-    private List<User> usersList;
+    private List<UserDB> usersList;
     private List<Player> playersList;
     private List<Category> categoryList;
+    private List<FavNewDB> favNewDBS;
     private NewsViewModel newsViewModel;
 
     @Override
@@ -115,6 +117,7 @@ public class MainActivity extends AppCompatActivity
         categoryList = newsViewModel.getAllCategory().getValue();
         usersList = newsViewModel.getAllUser().getValue();
         token = newsViewModel.getToken().getValue().getToken();
+        favNewDBS = newsViewModel.getAllFavNews().getValue();
 
         for (int i = 0; i<newsList.size();i++){
             news.add(newsList.get(i));
@@ -126,14 +129,19 @@ public class MainActivity extends AppCompatActivity
         for (int k =0;k<categoryList.size();k++){
             category.add(categoryList.get(k).getCategory());
         }
+
+        for(int h = 0 ; h<favNewDBS.size(); h++){
+            for (int y = 0;y<news.size();y++){
+                if (news.get(y).get_id().equals(favNewDBS.get(h))){
+                    favorits.add(news.get(y));
+                }
+            }
+        }
+
+        addMenuItemInNavMenuDrawer();
         //Estaba itentando sacar la lista de noticias favoritas del ususrario actual
         //falta que ver bien como se esta seteando el arreglo de noticias favoritas en la base
         //recordando que se guardan los ids de las noticias favoritas
-        /*for (int h =0;h<usersList.size();h++){
-            if(usersList.get(h).get_id().equals(userId)){
-                for ()
-            }
-        }*/
     }
 
     public void update(View view){
@@ -222,7 +230,7 @@ public class MainActivity extends AppCompatActivity
         Call<List<User>> call = servicio.getUsersList ("Bearer "+token);
         call.enqueue(new Callback<List<User>>() {
             @Override
-            public void onResponse(Call<List<User >> call, Response<List<User>> response) {
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
                 for (int i = 0 ; i<response.body().size();i++){
                     newsViewModel.insertUsers(response.body().get(i));
                 }
@@ -271,11 +279,7 @@ public class MainActivity extends AppCompatActivity
             public void onResponse(Call<User> call, Response<User> response) {
                 userId = response.body().get_id();
                 for (int i = 0;i<response.body().getFavoriteNews().size();i++){
-                    for (int j = 0 ; j<news.size();j++){
-                        if (news.get(j).get_id().equals(response.body().getFavoriteNews().get(i))){
-                            favorits.add(news.get(j));
-                        }
-                    }
+                    newsViewModel.insertFavNews(response.body().getFavoriteNews().get(i));
                 }
             }
             @Override

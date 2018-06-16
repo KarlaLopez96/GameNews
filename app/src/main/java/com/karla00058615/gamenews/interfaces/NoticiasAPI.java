@@ -5,6 +5,7 @@ import com.karla00058615.gamenews.classes.NewFav;
 import com.karla00058615.gamenews.classes.Player;
 import com.karla00058615.gamenews.classes.Token;
 import com.karla00058615.gamenews.classes.User;
+import com.karla00058615.gamenews.classes.UserDB;
 
 import java.util.List;
 

@@ -8,16 +8,17 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
+import com.karla00058615.gamenews.classes.FavNewDB;
 import com.karla00058615.gamenews.classes.New;
 import com.karla00058615.gamenews.classes.Player;
 import com.karla00058615.gamenews.classes.Token;
-import com.karla00058615.gamenews.classes.User;
+import com.karla00058615.gamenews.classes.UserDB;
 
 /**
  * Created by Karla on 14/6/2018.
  */
 
-@Database(entities = {New.class, Player.class, User.class,CategoryDao.class, Token.class}, version = 1)
+@Database(entities = {New.class, Player.class, UserDB.class,CategoryDao.class, Token.class, FavNewDB.class}, version = 1)
 public abstract class NewsRoomDatabase extends RoomDatabase {
 
     public abstract NewDao newDao();
@@ -25,6 +26,7 @@ public abstract class NewsRoomDatabase extends RoomDatabase {
     public abstract UserDao userDao();
     public abstract CategoryDao categoryDao();
     public abstract TokenDao tokenDao();
+    public abstract FavNewDAO favNewDAO();
 
     private static NewsRoomDatabase INSTANCE;
 

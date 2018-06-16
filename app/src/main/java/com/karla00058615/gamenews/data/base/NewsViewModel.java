@@ -6,10 +6,12 @@ import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
 import com.karla00058615.gamenews.classes.Category;
+import com.karla00058615.gamenews.classes.FavNewDB;
 import com.karla00058615.gamenews.classes.New;
 import com.karla00058615.gamenews.classes.Player;
 import com.karla00058615.gamenews.classes.Token;
 import com.karla00058615.gamenews.classes.User;
+import com.karla00058615.gamenews.classes.UserDB;
 
 import java.util.List;
 
@@ -22,9 +24,10 @@ public class NewsViewModel extends AndroidViewModel {
     private NewsRepository newsRepository;
     private LiveData<List<New>> allNews;
     private LiveData<List<Player>> allPlayer;
-    private LiveData<List<User>> allUser;
+    private LiveData<List<UserDB>> allUser;
     private LiveData<List<Category>> allCategory;
     private LiveData <Token> token;
+    private LiveData <List<FavNewDB>> allFavNews;
 
     public NewsViewModel(@NonNull Application application) {
         super(application);
@@ -34,10 +37,15 @@ public class NewsViewModel extends AndroidViewModel {
         allUser = newsRepository.getAllUsers();
         allCategory = newsRepository.getAllCategorys();
         token = newsRepository.getToken();
+        allFavNews = newsRepository.getAllFav();
     }
 
     public LiveData<List<New>> getAllNews() {
         return allNews;
+    }
+
+    public LiveData<List<FavNewDB>> getAllFavNews() {
+        return allFavNews;
     }
 
     public LiveData<Token> getToken() {
@@ -48,7 +56,7 @@ public class NewsViewModel extends AndroidViewModel {
         return allPlayer;
     }
 
-    public LiveData<List<User>> getAllUser() {
+    public LiveData<List<UserDB>> getAllUser() {
         return allUser;
     }
 
@@ -60,6 +68,10 @@ public class NewsViewModel extends AndroidViewModel {
 
     public void insertToken(Token token) { newsRepository.insertToken(token); }
 
+    public void insertFavNews(String id) {
+        FavNewDB news  = new FavNewDB(id);
+        newsRepository.insertFavs(news);
+    }
 
     public void insertCategorys(Category category){
         newsRepository.insertCategorys(category);
@@ -67,7 +79,10 @@ public class NewsViewModel extends AndroidViewModel {
 
     public void insertPlayers(Player player) { newsRepository.insertPlayers(player); }
 
-    public void insertUsers(User user) { newsRepository.insertUsers(user); }
+    public void insertUsers(User user) {
+        UserDB userDB= new UserDB(user.get_id(),user.getUser(),user.getPassword(),user.getCreated_date());
+        newsRepository.insertUsers(userDB);
+    }
 
     public void deleteAll(){
         newsRepository.deleteALL();

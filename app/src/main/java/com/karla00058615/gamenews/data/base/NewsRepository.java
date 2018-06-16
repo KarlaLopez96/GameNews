@@ -5,14 +5,11 @@ import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
 import com.karla00058615.gamenews.classes.Category;
+import com.karla00058615.gamenews.classes.FavNewDB;
 import com.karla00058615.gamenews.classes.New;
 import com.karla00058615.gamenews.classes.Player;
 import com.karla00058615.gamenews.classes.Token;
-import com.karla00058615.gamenews.classes.User;
-import com.karla00058615.gamenews.data.base.NewDao;
-import com.karla00058615.gamenews.data.base.NewsRoomDatabase;
-import com.karla00058615.gamenews.data.base.PlayerDao;
-import com.karla00058615.gamenews.data.base.UserDao;
+import com.karla00058615.gamenews.classes.UserDB;
 
 import java.util.List;
 
@@ -28,11 +25,14 @@ public class NewsRepository {
     private UserDao userDao;
     private CategoryDao categoryDao;
     private TokenDao tokenDao;
+    private FavNewDAO favNewDAO;
+
     private LiveData<List<New>> news;
     private LiveData<List<Player>> players;
-    private LiveData<List<User>> users;
+    private LiveData<List<UserDB>> users;
     private LiveData<List<Category>> categorys;
     private LiveData<Token> token;
+    private LiveData<List<FavNewDB>> favNew;
 
    NewsRepository (Application application){
         NewsRoomDatabase db = NewsRoomDatabase.getDatabase(application);
@@ -41,16 +41,22 @@ public class NewsRepository {
         userDao = db.userDao();
         categoryDao = db.categoryDao();
         tokenDao = db.tokenDao();
+        favNewDAO = db.favNewDAO();
 
         news = newDao.getAllNews();
         players = playerDao.getAllPlayers();
         users = userDao.getAllUsers();
         categorys = categoryDao.getAllCategory();
         token = tokenDao.getToken();
+        favNew = favNewDAO.getAllNews();
     }
 
     LiveData<List<New>> getAllNews() {
         return news;
+    }
+
+    LiveData<List<FavNewDB>> getAllFav() {
+        return favNew;
     }
 
     LiveData <Token> getToken() {
@@ -65,13 +71,18 @@ public class NewsRepository {
         return players;
     }
 
-    LiveData<List<User>> getAllUsers() {
+    LiveData<List<UserDB>> getAllUsers() {
         return users;
     }
 
     public void insertNews (New news) {
         new insertNewsAsyncTask(newDao).execute(news);
     }
+
+    public void insertFavs (FavNewDB favNewDB) {
+        new insertFavNewsAsyncTask(favNewDAO).execute(favNewDB);
+    }
+
     public void insertToken (Token token) {
         new insertTokenAsyncTask(tokenDao).execute(token);
     }
@@ -85,8 +96,8 @@ public class NewsRepository {
         new insertPlayerAsyncTask(playerDao).execute(player);
     }
 
-    public void insertUsers (User user) {
-        new insertUserAsyncTask(userDao).execute(user);
+    public void insertUsers (UserDB userDB) {
+        new insertUserAsyncTask(userDao).execute(userDB);
     }
 
     public void deleteALL(){
@@ -147,6 +158,21 @@ public class NewsRepository {
         }
     }
 
+    private static class insertFavNewsAsyncTask extends AsyncTask<FavNewDB, Void, Void> {
+
+        private FavNewDAO favNewDAO;
+
+        insertFavNewsAsyncTask(FavNewDAO dao) {
+            favNewDAO = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final FavNewDB... params) {
+            favNewDAO.insert(params[0]);
+            return null;
+        }
+    }
+
     private static class insertCategoryAsyncTask extends AsyncTask<Category, Void, Void> {
 
         private CategoryDao categoryDao;
@@ -177,7 +203,7 @@ public class NewsRepository {
         }
     }
 
-    private static class insertUserAsyncTask extends AsyncTask<User, Void, Void> {
+    private static class insertUserAsyncTask extends AsyncTask<UserDB, Void, Void> {
 
         private UserDao userDao;
 
@@ -186,7 +212,7 @@ public class NewsRepository {
         }
 
         @Override
-        protected Void doInBackground(final User... params) {
+        protected Void doInBackground(final UserDB... params) {
             userDao.insert(params[0]);
             return null;
         }

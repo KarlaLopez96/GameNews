@@ -5,7 +5,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
-import com.karla00058615.gamenews.classes.User;
+import com.karla00058615.gamenews.classes.UserDB;
 
 import java.util.List;
 
@@ -17,11 +17,11 @@ import java.util.List;
 public interface UserDao {
 
     @Insert
-    void insert(User user);
+    void insert(UserDB user);
 
-    @Query("DELETE FROM User")
+    @Query("DELETE FROM UserDB")
     void deleteAll();
 
-    @Query("SELECT * FROM User")
-    LiveData<List<User>> getAllUsers();
+    @Query("SELECT * FROM UserDB")
+    LiveData<List<UserDB>> getAllUsers();
 }
