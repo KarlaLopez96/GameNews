@@ -5,6 +5,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 
 /**
@@ -20,6 +22,9 @@ public class User {
     @NonNull
     @ColumnInfo(name = "id")
     private String _id;
+
+    @ColumnInfo(name = "favorits")
+    private String favoriteN;
 
     @ColumnInfo(name = "user")
     private String user;
@@ -76,5 +81,16 @@ public class User {
 
     public void setCreated_date(String created_date) {
         this.created_date = created_date;
+    }
+
+    public String getFavoriteN() {
+        Gson gson = new Gson();
+        favoriteN = gson.toJson(favoriteNews);
+        return favoriteN;
+    }
+
+    public void setFavoriteN(ArrayList<String> favoriteN) {
+        Gson gson = new Gson();
+        this.favoriteN = gson.toJson(favoriteN);
     }
 }

@@ -1,7 +1,11 @@
 package com.karla00058615.gamenews.activities;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -14,13 +18,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.view.View;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.karla00058615.gamenews.classes.Category;
 import com.karla00058615.gamenews.classes.New;
 import com.karla00058615.gamenews.classes.NewFav;
 import com.karla00058615.gamenews.classes.Player;
 import com.karla00058615.gamenews.classes.User;
+import com.karla00058615.gamenews.data.base.NewsViewModel;
 import com.karla00058615.gamenews.fragments.ManagerFragment;
 import com.karla00058615.gamenews.fragments.NewsList;
 import com.karla00058615.gamenews.interfaces.ComunicationIF;
@@ -48,11 +55,17 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<New> favorits = new ArrayList<>();
     private ArrayList<Player> players = new ArrayList<>();
     private ArrayList<String> category = new ArrayList<>();
+    private List<New> newsList;
+    private List<User> usersList;
+    private List<Player> playersList;
+    private List<Category> categoryList;
+    private NewsViewModel newsViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        newsViewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -66,6 +79,65 @@ public class MainActivity extends AppCompatActivity
 
         navigationView.setNavigationItemSelectedListener(this);
 
+
+        newsViewModel.getAllNews().observe(this, new Observer<List<New>>() {
+            @Override
+            public void onChanged(@Nullable List<New> n) {
+                news.clear();
+                for (int i = 0;i<n.size();i++){
+                    news.add(n.get(i));
+                }
+            }
+        });
+
+        newsViewModel.getAllPlayer().observe(this, new Observer<List<Player>>() {
+            @Override
+            public void onChanged(@Nullable List<Player> p) {
+                players.clear();
+                for (int i = 0;i<p.size();i++){
+                    players.add(p.get(i));
+                }
+            }
+        });
+        newsViewModel.getAllCategory().observe(this, new Observer<List<Category>>() {
+            @Override
+            public void onChanged(@Nullable List<Category> c) {
+                category.clear();
+                for (int i = 0;i<c.size();i++){
+                    category.add(c.get(i).getCategory());
+                }
+                addMenuItemInNavMenuDrawer();
+            }
+        });
+
+        newsList = newsViewModel.getAllNews().getValue();
+        playersList = newsViewModel.getAllPlayer().getValue();
+        categoryList = newsViewModel.getAllCategory().getValue();
+        usersList = newsViewModel.getAllUser().getValue();
+        token = newsViewModel.getToken().getValue().getToken();
+
+        for (int i = 0; i<newsList.size();i++){
+            news.add(newsList.get(i));
+
+        }
+        for (int j = 0;j<playersList.size();j++){
+            players.add(playersList.get(j));
+        }
+        for (int k =0;k<categoryList.size();k++){
+            category.add(categoryList.get(k).getCategory());
+        }
+        //Estaba itentando sacar la lista de noticias favoritas del ususrario actual
+        //falta que ver bien como se esta seteando el arreglo de noticias favoritas en la base
+        //recordando que se guardan los ids de las noticias favoritas
+        /*for (int h =0;h<usersList.size();h++){
+            if(usersList.get(h).get_id().equals(userId)){
+                for ()
+            }
+        }*/
+    }
+
+    public void update(View view){
+        newsViewModel.deleteAll();
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Token.class,new TokenDeserializar())
                 .create();
@@ -82,6 +154,7 @@ public class MainActivity extends AppCompatActivity
             public void onResponse(Call<Token> call, Response<Token> response) {
                 Log.d("Token",response.body().getToken());
                 token = response.body().getToken();
+                newsViewModel.insertToken(new Token(token));
                 getList();
             }
 
@@ -98,13 +171,12 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onResponse(Call<List<New>> call, Response<List<New>> response) {
                 for (int i = 0 ; i<response.body().size();i++){
-                    news.add(response.body().get(i));
+                    newsViewModel.insertNews(response.body().get(i));
                 }
                 getPlayers();
             }
             @Override
             public void onFailure(Call<List<New>> call, Throwable t) {
-
             }
         });
     }
@@ -116,7 +188,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onResponse(Call<List<Player>> call, Response<List<Player>> response) {
                 for (int i = 0 ; i<response.body().size();i++){
-                    players.add(response.body().get(i));
+                    newsViewModel.insertPlayers(response.body().get(i));
                 }
                 getCategory();
             }
@@ -134,13 +206,29 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onResponse(Call<List<String>> call, Response<List<String>> response) {
                 for (int i = 0 ; i<response.body().size();i++){
-                    category.add(response.body().get(i));
+                    newsViewModel.insertCategorys(new Category(response.body().get(i)));
                 }
                 getUser();
-                addMenuItemInNavMenuDrawer();
+                getUserListt();
             }
             @Override
             public void onFailure(Call<List<String>> call, Throwable t) {
+            }
+        });
+    }
+
+    public void getUserListt (){
+        Log.d("Token",token);
+        Call<List<User>> call = servicio.getUsersList ("Bearer "+token);
+        call.enqueue(new Callback<List<User>>() {
+            @Override
+            public void onResponse(Call<List<User >> call, Response<List<User>> response) {
+                for (int i = 0 ; i<response.body().size();i++){
+                    newsViewModel.insertUsers(response.body().get(i));
+                }
+            }
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
             }
         });
     }

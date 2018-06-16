@@ -1,5 +1,6 @@
 package com.karla00058615.gamenews.data.base;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
@@ -22,5 +23,5 @@ public interface NewDao {
     void deleteAll();
 
     @Query("SELECT * FROM News ORDER BY created_date DESC")
-    List<New> getAllNews();
+    LiveData<List<New>> getAllNews();
 }
