@@ -105,7 +105,7 @@ public class NewsRepository {
     }
 
     public void deleteALL(){
-       new deleteAllAsyncTask(userDao,favNewDAO,playerDao,categoryDao,newDao).execute();
+       new deleteAllAsyncTask(userDao,favNewDAO,playerDao,categoryDao,newDao,tokenDao).execute();
     }
 
     private static class deleteAllAsyncTask extends AsyncTask<Void, Void, Void> {
@@ -115,13 +115,15 @@ public class NewsRepository {
         private UserDao userDao;
         private PlayerDao playerDao;
         private CategoryDao categoryDao;
+        private TokenDao tokenDao;
 
-        deleteAllAsyncTask(UserDao uDao,FavNewDAO favNewDAO,PlayerDao pDao,CategoryDao cDao,NewDao dao) {
+        deleteAllAsyncTask(UserDao uDao,FavNewDAO favNewDAO,PlayerDao pDao,CategoryDao cDao,NewDao dao,TokenDao tokenDao) {
             this.newDao = dao;
             this.favNewDAO = favNewDAO;
             this.userDao = uDao;
             this.playerDao = pDao;
             this.categoryDao = cDao;
+            this.tokenDao = tokenDao;
         }
 
         @Override
@@ -131,6 +133,7 @@ public class NewsRepository {
             playerDao.deleteAll();
             categoryDao.deleteAll();
             favNewDAO.deleteAll();
+            tokenDao.deleteAll();
             return null;
         }
     }

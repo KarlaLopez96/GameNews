@@ -84,6 +84,16 @@ public class MainActivity extends AppCompatActivity
 
         subMenu = menu.addSubMenu(0,1,1,"Games");
 
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(Token.class,new TokenDeserializar())
+                .create();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://gamenewsuca.herokuapp.com/")
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        servicio = retrofit.create(NoticiasAPI.class);
 
         newsViewModel.getAllNews().observe(this, new Observer<List<New>>() {
             @Override
@@ -127,6 +137,15 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+        newsViewModel.getToken().observe(this, new Observer<Token>() {
+            @Override
+            public void onChanged(@Nullable Token t) {
+                if (!(t == null)){
+                    token = t.getToken();
+                    userId = t.getId();
+                }
+            }
+        });
 
         //addMenuItemInNavMenuDrawer();
         //Estaba itentando sacar la lista de noticias favoritas del ususrario actual
@@ -136,23 +155,13 @@ public class MainActivity extends AppCompatActivity
 
     public void update(){
         newsViewModel.deleteAll();
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Token.class,new TokenDeserializar())
-                .create();
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://gamenewsuca.herokuapp.com/")
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
-
-        servicio = retrofit.create(NoticiasAPI.class);
         Call<Token> call = servicio.getToken("00058615","00058615");
         call.enqueue(new Callback<Token>() {
             @Override
             public void onResponse(Call<Token> call, Response<Token> response) {
                 Log.d("Token",response.body().getToken());
                 token = response.body().getToken();
-                newsViewModel.insertToken(new Token(token));
                 getList();
             }
 
@@ -273,7 +282,8 @@ public class MainActivity extends AppCompatActivity
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                userId = response.body().get_id();
+                newsViewModel.insertToken( new Token(token,response.body().get_id()));
+
                 for (int i = 0;i<response.body().getFavoriteNews().size();i++){
                     newsViewModel.insertFavNews(response.body().getFavoriteNews().get(i));
                 }
