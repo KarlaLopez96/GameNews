@@ -22,6 +22,9 @@ public interface FavNewDAO {
     @Query("DELETE FROM Fav")
     void deleteAll();
 
+    @Query("DELETE FROM Fav WHERE idNew = (:newId)")
+    void deleteFav(String newId);
+
     @Query("SELECT * FROM Fav")
     LiveData<List<FavNewDB>> getAllNews();
 }

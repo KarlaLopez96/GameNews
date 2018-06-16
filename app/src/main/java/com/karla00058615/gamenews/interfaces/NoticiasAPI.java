@@ -10,12 +10,15 @@ import com.karla00058615.gamenews.classes.UserDB;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.DELETE;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by Karla on 3/6/2018.
@@ -30,6 +33,7 @@ public interface NoticiasAPI {
     @FormUrlEncoded
     @POST("/login")
     Call<Token> getToken(@Field("user") String User, @Field("password") String Pass);
+
     @GET("/players")
     Call<List<Player>> getPlayers(@Header("Authorization") String token);
 
@@ -47,6 +51,6 @@ public interface NoticiasAPI {
     Call<NewFav> addFav(@Header("Authorization") String token, @Path("userId") String userId, @Field("new") String new_id);
 
     @FormUrlEncoded
-    @POST("/users/{userId}/fav")
+    @HTTP(method = "DELETE", path = "/users/{userId}/fav", hasBody = true)
     Call<String> removeFav(@Header("Authorization") String token, @Path("userId") String userId, @Field("new") String new_id);
 }

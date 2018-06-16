@@ -2,6 +2,7 @@ package com.karla00058615.gamenews.classes;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -13,7 +14,11 @@ import android.support.annotation.NonNull;
 @Entity (tableName = "Player")
 public class Player implements Parcelable {
 
+    @PrimaryKey
     @NonNull
+    @ColumnInfo (name = "id")
+    private String _id;
+
     @ColumnInfo (name = "name")
     private String name;
 
@@ -33,7 +38,8 @@ public class Player implements Parcelable {
         game = in.readString();
     }
 
-    public Player(String name, String biografia, String avatar, String game) {
+    public Player(String id,String name, String biografia, String avatar, String game) {
+        this._id = id;
         this.name = name;
         this.biografia = biografia;
         this.avatar = avatar;
@@ -51,6 +57,23 @@ public class Player implements Parcelable {
             return new Player[size];
         }
     };
+
+    @NonNull
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(@NonNull String _id) {
+        this._id = _id;
+    }
+
+    public String getBiografia() {
+        return biografia;
+    }
+
+    public void setBiografia(String biografia) {
+        this.biografia = biografia;
+    }
 
     public String getName() {
         return name;

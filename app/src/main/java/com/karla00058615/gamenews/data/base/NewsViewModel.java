@@ -66,6 +66,8 @@ public class NewsViewModel extends AndroidViewModel {
 
     public void insertNews(New news) { newsRepository.insertNews(news); }
 
+    public void DeleteAFavNew(String fav) { newsRepository.deleteFav(fav); }
+
     public void insertToken(Token token) { newsRepository.insertToken(token); }
 
     public void insertFavNews(String id) {

@@ -83,6 +83,10 @@ public class NewsRepository {
         new insertFavNewsAsyncTask(favNewDAO).execute(favNewDB);
     }
 
+    public void deleteFav (String favNewDB) {
+        new deleteaFavNewsAsyncTask(favNewDAO).execute(favNewDB);
+    }
+
     public void insertToken (Token token) {
         new insertTokenAsyncTask(tokenDao).execute(token);
     }
@@ -101,21 +105,23 @@ public class NewsRepository {
     }
 
     public void deleteALL(){
-       new deleteAllAsyncTask(userDao,playerDao,categoryDao,newDao).execute();
+       new deleteAllAsyncTask(userDao,favNewDAO,playerDao,categoryDao,newDao).execute();
     }
 
     private static class deleteAllAsyncTask extends AsyncTask<Void, Void, Void> {
 
         private NewDao newDao;
+        private FavNewDAO favNewDAO;
         private UserDao userDao;
         private PlayerDao playerDao;
         private CategoryDao categoryDao;
 
-        deleteAllAsyncTask(UserDao uDao,PlayerDao pDao,CategoryDao cDao,NewDao dao) {
-            newDao = dao;
-            userDao = uDao;
-            playerDao = pDao;
-            categoryDao = cDao;
+        deleteAllAsyncTask(UserDao uDao,FavNewDAO favNewDAO,PlayerDao pDao,CategoryDao cDao,NewDao dao) {
+            this.newDao = dao;
+            this.favNewDAO = favNewDAO;
+            this.userDao = uDao;
+            this.playerDao = pDao;
+            this.categoryDao = cDao;
         }
 
         @Override
@@ -124,6 +130,22 @@ public class NewsRepository {
             userDao.deleteAll();
             playerDao.deleteAll();
             categoryDao.deleteAll();
+            favNewDAO.deleteAll();
+            return null;
+        }
+    }
+
+    private static class deleteaFavNewsAsyncTask extends AsyncTask<String, Void, Void> {
+
+        private FavNewDAO favNewDAO;
+
+        deleteaFavNewsAsyncTask(FavNewDAO dao) {
+            favNewDAO = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final String... params) {
+            favNewDAO.deleteFav(params[0]);
             return null;
         }
     }

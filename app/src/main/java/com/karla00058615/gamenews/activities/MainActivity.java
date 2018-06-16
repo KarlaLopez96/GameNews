@@ -2,6 +2,9 @@ package com.karla00058615.gamenews.activities;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,7 +20,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
-import android.view.View;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -27,7 +29,6 @@ import com.karla00058615.gamenews.classes.New;
 import com.karla00058615.gamenews.classes.NewFav;
 import com.karla00058615.gamenews.classes.Player;
 import com.karla00058615.gamenews.classes.User;
-import com.karla00058615.gamenews.classes.UserDB;
 import com.karla00058615.gamenews.data.base.NewsViewModel;
 import com.karla00058615.gamenews.fragments.ManagerFragment;
 import com.karla00058615.gamenews.fragments.NewsList;
@@ -56,12 +57,9 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<New> favorits = new ArrayList<>();
     private ArrayList<Player> players = new ArrayList<>();
     private ArrayList<String> category = new ArrayList<>();
-    private List<New> newsList;
-    private List<UserDB> usersList;
-    private List<Player> playersList;
-    private List<Category> categoryList;
-    private List<FavNewDB> favNewDBS;
     private NewsViewModel newsViewModel;
+    private boolean flag = true;
+    SubMenu subMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +78,11 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         navigationView.setNavigationItemSelectedListener(this);
+
+        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
+        Menu menu = navView.getMenu();
+
+        subMenu = menu.addSubMenu(0,1,1,"Games");
 
 
         newsViewModel.getAllNews().observe(this, new Observer<List<New>>() {
@@ -111,40 +114,27 @@ public class MainActivity extends AppCompatActivity
                 addMenuItemInNavMenuDrawer();
             }
         });
-
-        newsList = newsViewModel.getAllNews().getValue();
-        playersList = newsViewModel.getAllPlayer().getValue();
-        categoryList = newsViewModel.getAllCategory().getValue();
-        usersList = newsViewModel.getAllUser().getValue();
-        token = newsViewModel.getToken().getValue().getToken();
-        favNewDBS = newsViewModel.getAllFavNews().getValue();
-
-        for (int i = 0; i<newsList.size();i++){
-            news.add(newsList.get(i));
-
-        }
-        for (int j = 0;j<playersList.size();j++){
-            players.add(playersList.get(j));
-        }
-        for (int k =0;k<categoryList.size();k++){
-            category.add(categoryList.get(k).getCategory());
-        }
-
-        for(int h = 0 ; h<favNewDBS.size(); h++){
-            for (int y = 0;y<news.size();y++){
-                if (news.get(y).get_id().equals(favNewDBS.get(h))){
-                    favorits.add(news.get(y));
+        newsViewModel.getAllFavNews().observe(this, new Observer<List<FavNewDB>>() {
+            @Override
+            public void onChanged(@Nullable List<FavNewDB> favNewDBS) {
+                favorits.clear();
+                for(int h = 0 ; h<favNewDBS.size(); h++){
+                    for (int y = 0;y<news.size();y++){
+                        if (news.get(y).get_id().equals(favNewDBS.get(h).getIdNew())){
+                            favorits.add(news.get(y));
+                        }
+                    }
                 }
             }
-        }
+        });
 
-        addMenuItemInNavMenuDrawer();
+        //addMenuItemInNavMenuDrawer();
         //Estaba itentando sacar la lista de noticias favoritas del ususrario actual
         //falta que ver bien como se esta seteando el arreglo de noticias favoritas en la base
         //recordando que se guardan los ids de las noticias favoritas
     }
 
-    public void update(View view){
+    public void update(){
         newsViewModel.deleteAll();
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(Token.class,new TokenDeserializar())
@@ -243,33 +233,39 @@ public class MainActivity extends AppCompatActivity
 
     // estabas haciendo el post del agregar favoritos
     public void addFav(String id) {
-        Call<NewFav> call = servicio.addFav("Bearer " + token,userId,id);
-        call.enqueue(new Callback<NewFav>() {
-            @Override
-            public void onResponse(Call<NewFav> call, Response<NewFav> response) {
-                if(response.body().getSuccess().equals("true")){
-                    String p;
+        newsViewModel.insertFavNews(id);
+        if(Internet()){
+            Call<NewFav> call = servicio.addFav("Bearer " + token,userId,id);
+            call.enqueue(new Callback<NewFav>() {
+                @Override
+                public void onResponse(Call<NewFav> call, Response<NewFav> response) {
+                    if(response.body().getSuccess().equals("true")){
+                        String p;
+                    }
                 }
-            }
-            @Override
-            public void onFailure(Call<NewFav> call, Throwable t) {
-            }
-        });
+                @Override
+                public void onFailure(Call<NewFav> call, Throwable t) {
+                }
+            });
+        }
     }
 
     public void removeFav(String id) {
-        Call<String> call = servicio.removeFav("Bearer " + token,userId,id);
-        call.enqueue(new Callback<String>() {
-            @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                if(response.body().equals("The New has been Removed")){
-                    System.out.println("removido como se debe");
+        newsViewModel.DeleteAFavNew(id);
+        if(Internet()){
+            Call<String> call = servicio.removeFav("Bearer " + token,userId,id);
+            call.enqueue(new Callback<String>() {
+                @Override
+                public void onResponse(Call<String> call, Response<String> response) {
+                    if(response.body().equals("The New has been Removed")){
+                        System.out.println("removido como se debe");
+                    }
                 }
-            }
-            @Override
-            public void onFailure(Call<String> call, Throwable t) {
-            }
-        });
+                @Override
+                public void onFailure(Call<String> call, Throwable t) {
+                }
+            });
+        }
     }
 
     public void getUser(){
@@ -307,9 +303,7 @@ public class MainActivity extends AppCompatActivity
 
 
     private void addMenuItemInNavMenuDrawer() {
-        NavigationView navView = (NavigationView) findViewById(R.id.nav_view);
-        Menu menu = navView.getMenu();
-        SubMenu subMenu = menu.addSubMenu("Games");
+        subMenu.clear();
         for (int i = 0;i<category.size();i++){
             subMenu.add(0,i,1,category.get(i));
         }
@@ -323,6 +317,10 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
         if (id == R.id.search) {
+            return true;
+        }
+        if (id == R.id.refresh){
+            update();
             return true;
         }
 
@@ -350,6 +348,16 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public boolean Internet(){
+        ConnectivityManager cm =
+                (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+        return isConnected;
     }
 
     public void sendingAll(int opc){
