@@ -2,6 +2,7 @@ package com.karla00058615.gamenews.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,17 +40,13 @@ public class InfoFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_info, container, false);
 
         txt1 = v.findViewById(R.id.InfoTitle);
-        txt2 = v.findViewById(R.id.InfoBody);
-        txt3 = v.findViewById(R.id.InfoDescription);
-        txt4 = v.findViewById(R.id.InfoDate);
         img = v.findViewById(R.id.InfoImage);
 
         New news = getArguments().getParcelable("New");
 
-        txt1.setText(news.getTitle());
-        txt2.setText(news.getBody());
-        txt3.setText(news.getDescription());
-        txt4.setText(news.getCreated_date());
+        txt1.setText("Title: "+news.getTitle()+"\n\nBody:"+news.getBody()+"\n\nDescription: "+
+        news.getDescription()+"\n\nCreated Date: "+news.getCreated_date());
+        txt1.setMovementMethod(new ScrollingMovementMethod());
         Picasso.with(getContext()).load(news.getCoverImage())
                 .placeholder(R.drawable.ic_launcher_background)
                 .error(R.drawable.ic_launcher_background).into(img);

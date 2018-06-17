@@ -7,7 +7,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_margin="6dp">
 
         <ImageView
             android:layout_gravity="center"
@@ -17,19 +18,9 @@
 
         <TextView
             android:id="@+id/InfoTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/InfoBody"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/InfoDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/InfoDate"
+            android:text="Title"
+            android:maxLines="25"
+            android:scrollbars="vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

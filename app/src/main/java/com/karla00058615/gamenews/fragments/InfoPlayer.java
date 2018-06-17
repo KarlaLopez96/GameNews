@@ -3,6 +3,7 @@ package com.karla00058615.gamenews.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,15 +43,12 @@ public class InfoPlayer extends Fragment {
         View v = inflater.inflate(R.layout.fragment_info_player, container, false);
 
         txt1 = v.findViewById(R.id.InfoPlayerName);
-        txt2 = v.findViewById(R.id.InfoPlayerBiografia);
         img = v.findViewById(R.id.InfoPlayerImage);
 
         Player player = getArguments().getParcelable("Player");
 
-        txt1.setText(player.getName());
-
-        txt2.setText(player.getBiography());
-
+        txt1.setText("\n\n\n\nPlayer name: "+player.getName()+"\n\nBiography: "+player.getBiografia());
+        txt1.setMovementMethod(new ScrollingMovementMethod());
         Picasso.with(getContext()).load(player.getAvatar())
                 .placeholder(R.drawable.ic_launcher_background)
                 .error(R.drawable.ic_launcher_background).into(img);

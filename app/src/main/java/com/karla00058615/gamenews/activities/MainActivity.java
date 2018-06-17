@@ -3,6 +3,7 @@ package com.karla00058615.gamenews.activities;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -12,14 +13,20 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.view.View;
+import android.widget.SearchView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -29,9 +36,11 @@ import com.karla00058615.gamenews.classes.New;
 import com.karla00058615.gamenews.classes.NewFav;
 import com.karla00058615.gamenews.classes.Player;
 import com.karla00058615.gamenews.classes.User;
+import com.karla00058615.gamenews.classes.UserDB;
 import com.karla00058615.gamenews.data.base.NewsViewModel;
 import com.karla00058615.gamenews.fragments.ManagerFragment;
 import com.karla00058615.gamenews.fragments.NewsList;
+import com.karla00058615.gamenews.fragments.Settings;
 import com.karla00058615.gamenews.interfaces.ComunicationIF;
 import com.karla00058615.gamenews.interfaces.NoticiasAPI;
 import com.karla00058615.gamenews.R;
@@ -50,21 +59,27 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,ManagerFragment.OnFragmentInteractionListener,ComunicationIF{
 
     private int cont = 0;
-    private String token="null";
+    private String user,pass;
+    private String token;
     private NoticiasAPI servicio;
     private String userId;
     private ArrayList<New> news = new ArrayList<>();
+    private ArrayList<User> users = new ArrayList<>();
     private ArrayList<New> favorits = new ArrayList<>();
     private ArrayList<Player> players = new ArrayList<>();
     private ArrayList<String> category = new ArrayList<>();
+    ArrayList<New> filter = new ArrayList<>();
     private NewsViewModel newsViewModel;
     private boolean flag = true;
     SubMenu subMenu;
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        user = getIntent().getStringExtra("user");
+        pass = getIntent().getStringExtra("password");
         newsViewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -75,7 +90,7 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
 
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -104,7 +119,16 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-
+        newsViewModel.getAllUser().observe(this, new Observer<List<UserDB>>() {
+            @Override
+            public void onChanged(@Nullable List<UserDB> userDBS) {
+                users.clear();
+                for (int i = 0;i<userDBS.size();i++){
+                    users.add(new User(null,userDBS.get(i).get_id(),userDBS.get(i).getUser()
+                    ,userDBS.get(i).getPassword(),userDBS.get(i).getCreated_date()));
+                }
+            }
+        });
         newsViewModel.getAllPlayer().observe(this, new Observer<List<Player>>() {
             @Override
             public void onChanged(@Nullable List<Player> p) {
@@ -143,10 +167,16 @@ public class MainActivity extends AppCompatActivity
                 if (!(t == null)){
                     token = t.getToken();
                     userId = t.getId();
+                    for (int i = 0;i<users.size();i++){
+                        if(users.get(i).get_id().equals(userId)){
+                            View headerView = navigationView.getHeaderView(0);
+                            TextView navUsername = (TextView) headerView.findViewById(R.id.name);
+                            navUsername.setText(users.get(i).getUser());
+                        }
+                    }
                 }
             }
         });
-
         //addMenuItemInNavMenuDrawer();
         //Estaba itentando sacar la lista de noticias favoritas del ususrario actual
         //falta que ver bien como se esta seteando el arreglo de noticias favoritas en la base
@@ -156,20 +186,29 @@ public class MainActivity extends AppCompatActivity
     public void update(){
         newsViewModel.deleteAll();
 
-        Call<Token> call = servicio.getToken("00058615","00058615");
-        call.enqueue(new Callback<Token>() {
-            @Override
-            public void onResponse(Call<Token> call, Response<Token> response) {
-                Log.d("Token",response.body().getToken());
-                token = response.body().getToken();
-                getList();
-            }
+       if(!(token != null)){
+           Call<Token> call = servicio.getToken(user,pass);
+           call.enqueue(new Callback<Token>() {
+               @Override
+               public void onResponse(Call<Token> call, Response<Token> response) {
+                   try{
+                       Log.d("Token",response.body().getToken());
+                       token = response.body().getToken();
+                       getList();
+                   }catch (Throwable s){
+                       newsViewModel.deleteAll();
+                       Intent intent = new Intent(getApplicationContext(), Login.class);
+                       startActivity(intent);
+                   }
+               }
 
-            @Override
-            public void onFailure(Call<Token> call, Throwable t) {
-
-            }
-        });
+               @Override
+               public void onFailure(Call<Token> call, Throwable t) {
+               }
+           });
+       }else{
+           getList();
+       }
     }
 
     public void getList(){
@@ -178,12 +217,21 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onResponse(Call<List<New>> call, Response<List<New>> response) {
                 for (int i = 0 ; i<response.body().size();i++){
-                    newsViewModel.insertNews(response.body().get(i));
+                    try{
+                        newsViewModel.insertNews(response.body().get(i));
+                    }catch(Throwable s){
+                        newsViewModel.deleteAll();
+                        Intent intent = new Intent(getApplicationContext(), Login.class);
+                        startActivity(intent);
+                    }
                 }
                 getPlayers();
             }
             @Override
             public void onFailure(Call<List<New>> call, Throwable t) {
+                newsViewModel.deleteAll();
+                Intent intent = new Intent(getApplicationContext(), Login.class);
+                startActivity(intent);
             }
         });
     }
@@ -233,6 +281,7 @@ public class MainActivity extends AppCompatActivity
                 for (int i = 0 ; i<response.body().size();i++){
                     newsViewModel.insertUsers(response.body().get(i));
                 }
+                String p;
             }
             @Override
             public void onFailure(Call<List<User>> call, Throwable t) {
@@ -287,6 +336,9 @@ public class MainActivity extends AppCompatActivity
                 for (int i = 0;i<response.body().getFavoriteNews().size();i++){
                     newsViewModel.insertFavNews(response.body().getFavoriteNews().get(i));
                 }
+                View headerView = navigationView.getHeaderView(0);
+                TextView navUsername = (TextView) headerView.findViewById(R.id.name);
+                navUsername.setText(response.body().getUser().toString());
             }
             @Override
             public void onFailure(Call<User> call, Throwable t) {
@@ -308,6 +360,32 @@ public class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        MenuItem searchItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filter.clear();
+
+                if (newText.length() > 0) {
+
+                    for (int i = 0; i < news.size(); i++) {
+                        if (news.get(i).getTitle().toLowerCase().startsWith(newText.toLowerCase())) {
+                            filter.add(news.get(i));
+                        }
+
+                    }
+                    sendingAll(12345);
+                }
+
+                return false;
+            }
+        });
         return true;
     }
 
@@ -347,7 +425,16 @@ public class MainActivity extends AppCompatActivity
         }
         if (id == R.id.nav_fav){
             sendingAll(R.id.nav_fav);
-        } else{
+        }
+        if (id == R.id.exit){
+            newsViewModel.deleteAll();
+            Intent intent = new Intent(getApplicationContext(), Login.class);
+            startActivity(intent);
+
+        }if (id == R.id.settings){
+            sendingAll(R.id.settings);
+
+        }else{
             for (int i = 0 ; i<category.size();i++){
                 if(id == i){
                     sendingAll(i);
@@ -402,6 +489,21 @@ public class MainActivity extends AppCompatActivity
                 //Realizando cambios.
                 transaction.commit();
                 break;
+            case R.id.settings:
+                Settings fragmente4 = Settings.newInstance(token,userId);
+
+                transaction.replace(R.id.Fragment,fragmente4);
+
+                transaction.commit();
+                break;
+            case 12345:
+                NewsList fragment5 = NewsList.newInstance(filter,favorits);
+
+                transaction.replace(R.id.Fragment, fragment5);
+
+                //Realizando cambios.
+                transaction.commit();
+                break;
             default:
                 for (int i = 0;i<news.size();i++){
                     if(news.get(i).getGame().equals(category.get(opc)))
@@ -442,5 +544,15 @@ public class MainActivity extends AppCompatActivity
     public void remove(New noticia) {
         removeFav(noticia.get_id());
         favorits.remove(noticia);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

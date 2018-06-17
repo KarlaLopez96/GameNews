@@ -17,6 +17,7 @@ import retrofit2.http.GET;
 import retrofit2.http.HTTP;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -53,4 +54,8 @@ public interface NoticiasAPI {
     @FormUrlEncoded
     @HTTP(method = "DELETE", path = "/users/{userId}/fav", hasBody = true)
     Call<String> removeFav(@Header("Authorization") String token, @Path("userId") String userId, @Field("new") String new_id);
+
+    @FormUrlEncoded
+    @PUT("/users/{userId}")
+    Call<User> updateUser(@Header("Authorization") String token, @Path("userId") String userId, @Field("password") String new_id);
 }
