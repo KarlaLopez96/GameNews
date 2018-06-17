@@ -4,6 +4,8 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -81,6 +83,9 @@ public class MainActivity extends AppCompatActivity
         user = getIntent().getStringExtra("user");
         pass = getIntent().getStringExtra("password");
         newsViewModel = ViewModelProviders.of(this).get(NewsViewModel.class);
+
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -361,6 +366,10 @@ public class MainActivity extends AppCompatActivity
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         MenuItem searchItem = menu.findItem(R.id.search);
+        MenuItem update = menu.findItem(R.id.refresh);
+        Drawable icon = getResources().getDrawable(R.drawable.ic_refresh);
+        icon.setColorFilter(getResources().getColor(R.color.iconColor), PorterDuff.Mode.SRC_IN);
+        update.setIcon(icon);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
