@@ -28,7 +28,6 @@ import android.view.SubMenu;
 import android.view.View;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -60,7 +59,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,ManagerFragment.OnFragmentInteractionListener,ComunicationIF{
 
-    private int cont = 0;
     private String user,pass;
     private String token;
     private NoticiasAPI servicio;
@@ -182,10 +180,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-        //addMenuItemInNavMenuDrawer();
-        //Estaba itentando sacar la lista de noticias favoritas del ususrario actual
-        //falta que ver bien como se esta seteando el arreglo de noticias favoritas en la base
-        //recordando que se guardan los ids de las noticias favoritas
     }
 
     public void update(){
@@ -286,7 +280,6 @@ public class MainActivity extends AppCompatActivity
                 for (int i = 0 ; i<response.body().size();i++){
                     newsViewModel.insertUsers(response.body().get(i));
                 }
-                String p;
             }
             @Override
             public void onFailure(Call<List<User>> call, Throwable t) {
@@ -294,7 +287,6 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    // estabas haciendo el post del agregar favoritos
     public void addFav(String id) {
         newsViewModel.insertFavNews(id);
         if(Internet()){
@@ -303,7 +295,6 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onResponse(Call<NewFav> call, Response<NewFav> response) {
                     if(response.body().getSuccess().equals("true")){
-                        String p;
                     }
                 }
                 @Override
